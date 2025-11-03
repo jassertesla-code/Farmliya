@@ -1,519 +1,344 @@
+
 <!doctype html>
 <html lang="ar">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Farmliya — 100 DevTools</title>
+<title>PUBG UC Simulator — Farmliya</title>
 <link rel="icon" href="data:," />
 <style>
 :root{
-  --bg:#071226; --card:#0b1220; --accent:#00d1a1; --muted:#94a3b8;
+  --bg-dark: #0b0b0d;
+  --panel: rgba(10,10,12,0.75);
+  --gold: #d9a441;
+  --gold-2: #f0c75e;
+  --muted: #98a0a6;
+  --accent: #00d1a1;
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#041426,#071025);color:#e6eef6;min-height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
-h1{margin:0;font-size:18px;color:var(--accent)}
-.muted{color:var(--muted)}
-.container{display:flex;gap:18px;padding:18px}
-main{flex:1;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.00));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);min-height:70vh}
-.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:12px}
-textarea,input,select{width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);color:inherit}
-button{background:var(--accent);border:0;color:#042025;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700}
-.row{display:flex;gap:8px;align-items:center}
-pre{background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;overflow:auto}
-footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
 
-/* FAB and drawer */
-.fab{position:fixed;right:18px;top:16px;z-index:1200;width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--accent),#00b88f);box-shadow:0 8px 28px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.fab svg{width:26px;height:26px}
-.drawer{position:fixed;right:18px;top:86px;z-index:1100;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);width:320px;max-height:72vh;overflow:auto;display:none}
-.drawer.open{display:block}
-.tool-btn{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;margin-bottom:8px;background:transparent;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
-.tool-btn:hover{background:rgba(255,255,255,0.01)}
-.search{margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);background:rgba(255,255,255,0.01);color:inherit}
+/* Basic reset */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.15) 100%), var(--bg-dark);
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 
+/* Animated battlefield background */
+.bg-wrap{
+  position:fixed; inset:0; z-index:0; overflow:hidden;
+  background: linear-gradient(180deg,#071018 0%, #0b0f16 60%, #050607 100%);
+}
+.bg-layer{
+  position:absolute; inset:0; background-repeat:no-repeat; background-position:center; opacity:0.12;
+  background-image: url('https://images.unsplash.com/photo-1549887534-9d2f9b7d5b7b?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&s='); /* battlefield-ish */
+  transform: scale(1.15);
+  filter: blur(4px) saturate(0.9) hue-rotate(-8deg);
+  animation: slowpan 35s linear infinite;
+}
+@keyframes slowpan{
+  0%{ transform:scale(1.12) translateX(0) translateY(0) }
+  50%{ transform:scale(1.18) translateX(-3%) translateY(-2%) }
+  100%{ transform:scale(1.12) translateX(0) translateY(0) }
+}
+/* subtle top lighting */
+.bg-top{
+  position:absolute; left:0; right:0; top:0; height:160px;
+  background: linear-gradient(180deg, rgba(255,200,100,0.06), transparent);
+  pointer-events:none;
+}
+
+/* Layout */
+.container{
+  position:relative; z-index:3; max-width:980px; margin:40px auto; padding:28px;
+}
+.header{
+  display:flex; align-items:center; gap:14px; margin-bottom:18px;
+}
+.logo{
+  width:66px; height:66px; border-radius:12px; background:linear-gradient(135deg,var(--gold),var(--gold-2)); display:flex;align-items:center;justify-content:center;color:#071018;font-weight:800;font-size:20px;box-shadow:0 8px 30px rgba(0,0,0,0.6);
+}
+.title h1{font-size:20px;margin-bottom:4px}
+.title p{color:var(--muted);font-size:13px}
+
+/* Panel */
+.panel{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  padding:18px; border-radius:12px; box-shadow: 0 10px 40px rgba(2,6,12,0.6);
+  display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start;
+}
+
+/* Left column (form) */
+.form-card{padding:10px}
+.row{margin-bottom:12px}
+.label{font-size:13px;color:var(--muted);margin-bottom:6px}
+.input, select{
+  width:100%; padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;font-size:15px;
+}
+.small{font-size:13px;padding:8px 10px;border-radius:8px}
+
+/* Buttons */
+.actions{display:flex;gap:10px;align-items:center}
+.btn-primary{
+  background: linear-gradient(180deg,var(--gold),var(--gold-2));
+  color:#071018;border:0;padding:12px 16px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(217,164,65,0.12);
+}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+
+/* Right column (preview) */
+.preview{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005));
+  border:1px solid rgba(255,255,255,0.03); padding:14px;border-radius:10px; min-height:220px;
+}
+.preview h3{margin-bottom:8px}
+.status {
+  padding:12px;border-radius:8px;background:rgba(0,0,0,0.25);font-weight:700;
+  display:flex;align-items:center;gap:10px;color:var(--muted)
+}
+
+/* progress */
+.progress-wrap{margin-top:12px}
+.progress{
+  height:12px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)
+}
+.progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-2));transition:width 0.3s ease}
+
+/* success modal */
+.modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);z-index:9999;
+  background:linear-gradient(180deg,#061015,#071018);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);width:92%;max-width:420px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:all 240ms ease;
+}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal h2{color:var(--gold);margin-bottom:6px}
+.modal p{color:var(--muted);margin-bottom:14px}
+
+/* footer note */
+.note{margin-top:10px;color:var(--muted);font-size:13px}
+
+/* responsive */
 @media(max-width:900px){
-  .container{flex-direction:column;padding:12px}
-  .drawer{right:12px;width:92vw;top:76px}
-  .fab{right:12px}
+  .panel{grid-template-columns:1fr; padding:14px}
+  .header{gap:10px}
+  .logo{width:56px;height:56px}
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>Farmliya — مكتبة الأدوات (100+)</h1>
-  <div class="muted">اختر أداة من الزر العائم أعلى اليمين</div>
-</header>
 
-<div class="fab" id="fab" title="Tools">
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 6h18M3 12h18M3 18h18" stroke="#042025" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</div>
-
-<div class="drawer" id="drawer" role="menu" aria-hidden="true">
-  <input id="toolSearch" class="search" placeholder="ابحث عن أداة..." />
-  <div id="toolList"></div>
-  <div style="height:10px"></div>
-  <div class="muted" style="font-size:13px">أدوات قابلة للتوسعة — اضغط لاختبار أي أداة.</div>
+<div class="bg-wrap">
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="bg-top" aria-hidden="true"></div>
 </div>
 
 <div class="container">
-  <main id="main">
-    <div class="card">
-      <h2>مرحبًا في Farmliya DevTools</h2>
-      <p class="muted">تشمل هنا 100 أداة جاهزة للاستخدام — اختر واحدة من زر الأدوات أعلى اليمين. يمكنك تطوير أي أداة لاحقًا بإضافة منطق داخل الكود.</p>
+  <div class="header">
+    <div class="logo">UC</div>
+    <div class="title">
+      <h1>PUBG UC Simulator</h1>
+      <p>واجهة تجريبية — لا شحن حقيقي. للتعليم وتصميم الواجهات فقط.</p>
     </div>
-    <div id="toolArea"></div>
-  </main>
+  </div>
+
+  <div class="panel" role="main" aria-label="Simulator panel">
+    <!-- left: form -->
+    <div class="form-card">
+      <div class="row">
+        <div class="label">اسم اللاعب (اختياري)</div>
+        <input id="playerName" class="input" placeholder="مثال: tr_slaye">
+      </div>
+
+      <div class="row">
+        <div class="label">معرّف اللاعب (User ID)</div>
+        <input id="playerId" class="input" placeholder="أدخل ID اللاعب (أرقام)">
+      </div>
+
+      <div class="row">
+        <div class="label">كمية UC</div>
+        <select id="ucAmount" class="input small">
+          <option value="60">60 UC</option>
+          <option value="300">300 UC</option>
+          <option value="600">600 UC</option>
+          <option value="1200">1200 UC</option>
+          <option value="2800">2800 UC</option>
+          <option value="5000">5000 UC</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="label">خيار الخادم (Region)</div>
+        <select id="region" class="input small">
+          <option value="Asia">Asia</option>
+          <option value="Europe">Europe</option>
+          <option value="North America">North America</option>
+          <option value="MENA">MENA</option>
+        </select>
+      </div>
+
+      <div class="row actions">
+        <button id="chargeBtn" class="btn-primary">شحن تخيّلي الآن</button>
+        <button id="resetBtn" class="btn-ghost">إعادة تعبئة</button>
+      </div>
+
+      <div class="note">تنبيه: هذه صفحة محاكاة للتعلّم. لا تدخل كلمات المرور أو أي بيانات حساسة.</div>
+    </div>
+
+    <!-- right: preview -->
+    <div class="preview" aria-live="polite">
+      <h3>تفاصيل العملية</h3>
+      <div id="previewBox">
+        <div class="status">
+          <div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--gold),var(--gold-2))"></div>
+          <div><strong>جاهز للشحن التخيلي</strong><div class="muted">املأ النموذج ثم اضغط "شحن تخيلي الآن"</div></div>
+        </div>
+
+        <div class="progress-wrap" style="display:none" id="progressWrap">
+          <div style="margin-top:10px" class="muted">جاري تنفيذ العملية...</div>
+          <div class="progress" aria-hidden="true" style="margin-top:8px"><i id="progressBar"></i></div>
+        </div>
+
+        <div id="resultArea" style="margin-top:12px;display:none">
+          <div class="muted">نتيجة المحاكاة:</div>
+          <pre id="resultText" style="background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;margin-top:8px"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<footer>Farmliya • جميع الأدوات تعمل داخل المتصفح (client-side) ما عدا ما ذكر أنه يحتاج إنترنت.</footer>
+<!-- modal -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <h2>✅ تمّ الشحن (تجريبي)</h2>
+  <p id="modalMsg">تم إضافة UC حسابك بنجاح (محاكاة).</p>
+  <div><button id="closeModal" class="btn-primary">حسناً</button></div>
+</div>
 
 <script>
-/* ============================
-   تعريف قائمة الأدوات (100 أدوات)
-   كل عنصر: id, name, type (for behavior)
-   نوعي: "text" (نصوص/تحويلات)، "crypto", "gen", "ui" (عرض/ترفيه)، "net" (شبكات - قد تحتاج إنترنت)
-   ============================ */
-const TOOLS = [
-  // 1-20 text/tools
-  {id:'t1', name:'JSON Formatter / Validator', type:'text'},
-  {id:'t2', name:'JSON → CSV / CSV → JSON', type:'text'},
-  {id:'t3', name:'Base64 Encode / Decode', type:'text'},
-  {id:'t4', name:'URL Encode / Decode', type:'text'},
-  {id:'t5', name:'Regex Tester', type:'text'},
-  {id:'t6', name:'Case Converter (upper/lower/title)', type:'text'},
-  {id:'t7', name:'Remove Duplicates / Sort Lines', type:'text'},
-  {id:'t8', name:'Word / Character Counter', type:'text'},
-  {id:'t9', name:'Minify / Beautify (HTML/CSS/JS)', type:'text'},
-  {id:'t10', name:'Diff Viewer (compare two texts)', type:'text'},
-  {id:'t11', name:'Markdown Live Preview', type:'text'},
-  {id:'t12', name:'README Generator (template)', type:'text'},
-  {id:'t13', name:'Lorem Ipsum Generator', type:'gen'},
-  {id:'t14', name:'Slugifier (title → slug)', type:'text'},
-  {id:'t15', name:'UUID v4 Generator', type:'gen'},
-  {id:'t16', name:'Clipboard Helper (copy selected)', type:'ui'},
-  {id:'t17', name:'Case-insensitive Search', type:'text'},
-  {id:'t18', name:'Trim / Collapse spaces', type:'text'},
-  {id:'t19', name:'Line to CSV / CSV to Lines', type:'text'},
-  {id:'t20', name:'Random Lorem Words', type:'gen'},
+/* Simple PUBG UC Simulator (client-side only) */
+/* No real transactions, educational only. */
 
-  // 21-40 crypto/security
-  {id:'t21', name:'SHA-1 / SHA-256 / MD5', type:'crypto'},
-  {id:'t22', name:'HMAC (keyed hash)', type:'crypto'},
-  {id:'t23', name:'Password Generator + Strength', type:'gen'},
-  {id:'t24', name:'Password Strength Checker', type:'crypto'},
-  {id:'t25', name:'JWT Decoder (header/payload)', type:'crypto'},
-  {id:'t26', name:'JWT Playground (create unsigned)', type:'crypto'},
-  {id:'t27', name:'Base32 / Base62 converters', type:'text'},
-  {id:'t28', name:'AES Encrypt / Decrypt (demo)', type:'crypto'},
-  {id:'t29', name:'TOTP (Time-based OTP) generator', type:'crypto'},
-  {id:'t30', name:'Hash Compare Utility', type:'crypto'},
-  {id:'t31', name:'PBKDF2 demo (derive key)', type:'crypto'},
-  {id:'t32', name:'UUID v1/v4 options', type:'gen'},
-  {id:'t33', name:'Entropy Estimator', type:'crypto'},
-  {id:'t34', name:'Secure Password Tips', type:'ui'},
-  {id:'t35', name:'Hash from file (client-side)', type:'crypto'},
-  {id:'t36', name:'JWT Verify (decode only)', type:'crypto'},
-  {id:'t37', name:'URL Safety Checker (basic)', type:'text'},
-  {id:'t38', name:'Password leak demo (local sample)', type:'crypto'},
-  {id:'t39', name:'PEM / RSA Public Key Info (parse)', type:'crypto'},
-  {id:'t40', name:'Crypto Random Bytes Generator', type:'crypto'},
+// Elements
+const chargeBtn = document.getElementById('chargeBtn');
+const resetBtn = document.getElementById('resetBtn');
+const playerId = document.getElementById('playerId');
+const playerName = document.getElementById('playerName');
+const ucAmount = document.getElementById('ucAmount');
+const region = document.getElementById('region');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+const resultArea = document.getElementById('resultArea');
+const resultText = document.getElementById('resultText');
+const modal = document.getElementById('modal');
+const modalMsg = document.getElementById('modalMsg');
+const closeModal = document.getElementById('closeModal');
 
-  // 41-60 network/web utilities
-  {id:'t41', name:'IP Checker (public)', type:'net'},
-  {id:'t42', name:'DNS lookup (A/MX/TXT) demo', type:'net'},
-  {id:'t43', name:'Whois (demo info)', type:'net'},
-  {id:'t44', name:'HTTP Header Viewer (fetch)', type:'net'},
-  {id:'t45', name:'CORS Tester (explain)', type:'net'},
-  {id:'t46', name:'QR Code Generator', type:'ui'},
-  {id:'t47', name:'QR Scanner (camera)', type:'ui'},
-  {id:'t48', name:'URL Shortener (use public api)', type:'net'},
-  {id:'t49', name:'Robots.txt Generator', type:'text'},
-  {id:'t50', name:'Sitemap generator (from list)', type:'text'},
-  {id:'t51', name:'Cookie Inspector (explain)', type:'net'},
-  {id:'t52', name:'Meta Tag Generator (SEO)', type:'text'},
-  {id:'t53', name:'Link extractor from HTML', type:'text'},
-  {id:'t54', name:'Embed preview (og tags)', type:'net'},
-  {id:'t55', name:'Ping / Uptime test (simulated)', type:'net'},
-  {id:'t56', name:'Robots tester (check rules)', type:'net'},
-  {id:'t57', name:'Fetch JSON and pretty print', type:'net'},
-  {id:'t58', name:'JSON Schema quick check', type:'text'},
-  {id:'t59', name:'URL params parser', type:'text'},
-  {id:'t60', name:'UserAgent parser (basic)', type:'text'},
-
-  // 61-80 images/media
-  {id:'t61', name:'Image → Base64 (client)', type:'ui'},
-  {id:'t62', name:'Image resize (canvas)', type:'ui'},
-  {id:'t63', name:'Favicon generator', type:'ui'},
-  {id:'t64', name:'Image color palette extractor', type:'ui'},
-  {id:'t65', name:'Image format convert (png↔webp)', type:'ui'},
-  {id:'t66', name:'Canvas watermark tool', type:'ui'},
-  {id:'t67', name:'Screenshot element to PNG', type:'ui'},
-  {id:'t68', name:'SVG optimizer (simple)', type:'text'},
-  {id:'t69', name:'GIF maker (frames demo)', type:'ui'},
-  {id:'t70', name:'Image OCR demo (client lib)', type:'ui'},
-  {id:'t71', name:'Color contrast checker', type:'ui'},
-  {id:'t72', name:'Grayscale / Filters demo', type:'ui'},
-  {id:'t73', name:'Image metadata viewer (EXIF)', type:'ui'},
-  {id:'t74', name:'Thumbnail generator (batch)', type:'ui'},
-  {id:'t75', name:'Photo watermark remover demo (educational)', type:'ui'},
-  {id:'t76', name:'Image composition (layers)', type:'ui'},
-  {id:'t77', name:'Emoji overlay maker', type:'ui'},
-  {id:'t78', name:'Avatar generator (initials)', type:'ui'},
-  {id:'t79', name:'Color to CSS variables', type:'ui'},
-  {id:'t80', name:'Image tiling demo', type:'ui'},
-
-  // 81-100 developer/productivity
-  {id:'t81', name:'UUID batch generator', type:'gen'},
-  {id:'t82', name:'Snippet manager (localStorage)', type:'ui'},
-  {id:'t83', name:'Save snippet to Gist (token opt.)', type:'net'},
-  {id:'t84', name:'Curl / Fetch generator from form', type:'text'},
-  {id:'t85', name:'JS Runner (sandbox iframe)', type:'ui'},
-  {id:'t86', name:'CSS gradient generator', type:'ui'},
-  {id:'t87', name:'Tailwind helper (classes)', type:'text'},
-  {id:'t88', name:'Project README templates', type:'text'},
-  {id:'t89', name:'Git cheat-sheet (generate commands)', type:'text'},
-  {id:'t90', name:'HTTP status code helper', type:'text'},
-  {id:'t91', name:'LocalStorage viewer/editor', type:'ui'},
-  {id:'t92', name:'Theme switcher (save pref)', type:'ui'},
-  {id:'t93', name:'Typing speed test', type:'ui'},
-  {id:'t94', name:'Tiny games hub (tic tac toe)', type:'ui'},
-  {id:'t95', name:'CTF mini challenge (XSS safe)', type:'ui'},
-  {id:'t96', name:'Countdown / Pomodoro', type:'ui'},
-  {id:'t97', name:'Note pad (save locally)', type:'ui'},
-  {id:'t98', name:'Poll / simple survey widget (local)', type:'ui'},
-  {id:'t99', name:'Meme text overlay (image)', type:'ui'},
-  {id:'t100', name:'Random developer quote', type:'gen'},
-  {id:'t101', name:'Extra: generate placeholder data', type:'gen'}
-];
-
-// render tool list
-const toolList = document.getElementById('toolList');
-function renderList(filter=''){
-  const html = TOOLS.filter(t=> t.name.toLowerCase().includes(filter.toLowerCase()))
-    .map(t=>`<div class="tool-btn" data-id="${t.id}"><div><strong>${t.name}</strong><div class="muted">${t.type}</div></div><div>▶</div></div>`).join('');
-  toolList.innerHTML = html;
-}
-renderList();
-
-// search
-const toolSearch = document.getElementById('toolSearch');
-toolSearch.addEventListener('input', ()=> renderList(toolSearch.value));
-
-// drawer open/close
-const fab = document.getElementById('fab');
-const drawer = document.getElementById('drawer');
-fab.addEventListener('click', ()=> drawer.classList.toggle('open'));
-
-// handle clicks on tools
-toolList.addEventListener('click', e=>{
-  const el = e.target.closest('.tool-btn');
-  if(!el) return;
-  const id = el.dataset.id;
-  const tool = TOOLS.find(t=>t.id===id);
-  if(tool) openTool(tool);
-  drawer.classList.remove('open');
-  window.scrollTo({top:0,behavior:'smooth'});
-});
-
-// main tool open
-const toolArea = document.getElementById('toolArea');
-function openTool(tool){
-  // simple renderer based on tool.type or id
-  toolArea.innerHTML = `<div class="card"><h3>${tool.name}</h3><div class="muted">نوع: ${tool.type}</div><div style="height:10px"></div><div id="toolContent"></div></div>`;
-  const content = document.getElementById('toolContent');
-  // dispatch by id/type
-  if(tool.id==='t1') renderJSONTool(content);
-  else if(tool.id==='t3') renderBase64(content);
-  else if(tool.id==='t11') renderMarkdown(content);
-  else if(tool.id==='t21') renderHashTool(content);
-  else if(tool.id==='t23') renderPasswordTool(content);
-  else if(tool.id==='t25') renderJWT(content);
-  else if(tool.id==='t46') renderQR(content);
-  else if(tool.id==='t61') renderImageToBase64(content);
-  else if(tool.id==='t15' || tool.type==='gen') renderGenericGenerator(content, tool);
-  else if(tool.type==='text') renderTextTool(content, tool);
-  else if(tool.type==='net') renderNetTool(content, tool);
-  else renderPlaceholder(content, tool);
-}
-
-/* ========================
-   Implementations of many tools
-   (Keep functions compact and safe)
-   ======================== */
-
-function renderPlaceholder(container, tool){
-  container.innerHTML = `<div class="muted">هذه أداة جاهزة للبرمجة: <strong>${tool.name}</strong>.</div>
-  <div style="height:8px"></div><div class="muted">يمكنك تطويرها لاحقًا بوضع HTML/JS داخل ملف index.html أو كملف منفصل ثم استدعاؤه.</div>`;
-}
-
-/* ---------- Text generic tool (simple editor + run functions) ---------- */
-function renderTextTool(container, tool){
-  container.innerHTML = `
-    <textarea id="txt" rows="8" placeholder="أدخل نصًا أو لصقه هنا..."></textarea>
-    <div style="height:8px"></div>
-    <div class="row">
-      <button id="btnUpper">Uppercase</button>
-      <button id="btnLower" class="small">Lowercase</button>
-      <button id="btnTitle" class="small">Title Case</button>
-      <button id="btnTrim" class="small">Trim</button>
-      <button id="btnDup" class="small">Remove Dups</button>
-      <button id="btnCopy" class="small">Copy</button>
-    </div>
-    <div style="height:8px"></div>
-    <pre id="txtOut">—</pre>
-  `;
-  const tx = container.querySelector('#txt');
-  const out = container.querySelector('#txtOut');
-  container.querySelector('#btnUpper').onclick = ()=> out.textContent = tx.value.toUpperCase();
-  container.querySelector('#btnLower').onclick = ()=> out.textContent = tx.value.toLowerCase();
-  container.querySelector('#btnTitle').onclick = ()=> out.textContent = tx.value.replace(/\w\S*/g, w=>w.charAt(0).toUpperCase()+w.substr(1).toLowerCase());
-  container.querySelector('#btnTrim').onclick = ()=> out.textContent = tx.value.trim().replace(/\s+/g,' ');
-  container.querySelector('#btnDup').onclick = ()=> {
-    const lines = tx.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    out.textContent = Array.from(new Set(lines)).join('\n');
-  };
-  container.querySelector('#btnCopy').onclick = ()=> { navigator.clipboard.writeText(out.textContent).then(()=>alert('نُسخ')); };
-}
-
-/* ---------- JSON Tool ---------- */
-function renderJSONTool(container){
-  container.innerHTML = `
-    <textarea id="jsonIn" rows="10" placeholder='{"name":"Ali","age":22}'></textarea>
-    <div style="height:8px"></div>
-    <div class="row">
-      <button id="format">Format</button>
-      <button id="validate" class="small">Validate</button>
-      <button id="toCsv" class="small">To CSV</button>
-      <button id="copy" class="small">Copy</button>
-    </div>
-    <div style="height:8px"></div>
-    <pre id="jsonOut">-</pre>
-  `;
-  const inEl = container.querySelector('#jsonIn'), out = container.querySelector('#jsonOut');
-  container.querySelector('#format').onclick = ()=>{
-    try{ const obj = JSON.parse(inEl.value); out.textContent = JSON.stringify(obj,null,2); } catch(e){ out.textContent = 'خطأ: JSON غير صالح — '+e.message; }
-  };
-  container.querySelector('#validate').onclick = ()=> {
-    try{ JSON.parse(inEl.value); out.textContent = '✅ JSON صالح'; } catch(e){ out.textContent = '❌ غير صالح: '+e.message; }
-  };
-  container.querySelector('#toCsv').onclick = ()=> {
-    try{
-      const obj = JSON.parse(inEl.value);
-      if(Array.isArray(obj)){
-        const keys = Array.from(new Set(obj.flatMap(o=>Object.keys(o))));
-        const lines = [keys.join(',')].concat(obj.map(o=>keys.map(k=> (o[k]!==undefined?('"' + String(o[k]).replace(/"/g,'""') + '"'):'') ).join(',')));
-        out.textContent = lines.join('\n');
-      } else out.textContent = 'انت تحتاج مصفوفة من الكائنات JSON[]';
-    }catch(e){ out.textContent='خطأ: '+e.message; }
-  };
-  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(out.textContent).then(()=>alert('نُسخ'));
-}
-
-/* ---------- Base64 ---------- */
-function renderBase64(container){
-  container.innerHTML = `
-    <textarea id="bIn" rows="5"></textarea>
-    <div style="height:8px"></div>
-    <div class="row"><button id="enc">Encode</button><button id="dec" class="small">Decode</button><button id="copy" class="small">Copy</button></div>
-    <div style="height:8px"></div><pre id="bOut">-</pre>
-  `;
-  container.querySelector('#enc').onclick = ()=>{
-    try{ const s = container.querySelector('#bIn').value; const out = btoa(unescape(encodeURIComponent(s))); container.querySelector('#bOut').textContent = out; } catch(e){ container.querySelector('#bOut').textContent='خطأ'; }
-  };
-  container.querySelector('#dec').onclick = ()=>{
-    try{ const s = container.querySelector('#bIn').value; const out = decodeURIComponent(escape(atob(s))); container.querySelector('#bOut').textContent = out; } catch(e){ container.querySelector('#bOut').textContent='Invalid Base64'; }
-  };
-  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#bOut').textContent).then(()=>alert('نُسخ'));
-}
-
-/* ---------- Markdown (marked.js via CDN) ---------- */
-function renderMarkdown(container){
-  container.innerHTML = `
-    <div class="row"><textarea id="md" rows="8"># Hello\nWrite **Markdown** here.</textarea></div>
-    <div style="height:8px"></div>
-    <div class="card" id="mdPreview" style="min-height:120px"></div>
-  `;
-  // load marked if not present
-  if(!window.markedLoaded){
-    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js'; s.onload = ()=> { window.markedLoaded=true; setup(); };
-    document.body.appendChild(s);
-  } else setup();
-  function setup(){
-    const md = container.querySelector('#md'), prev = container.querySelector('#mdPreview');
-    md.addEventListener('input', ()=> { prev.innerHTML = marked.parse(md.value || ''); });
-    md.dispatchEvent(new Event('input'));
+// Helper: simple validation
+function validInput(){
+  const id = playerId.value.trim();
+  if(!id || !/^\d+$/.test(id)){
+    alert('فضلاً أدخل رقم ID صالح (أرقام فقط).');
+    return false;
   }
+  return true;
 }
 
-/* ---------- Hash tool with Web Crypto ---------- */
-async function shaHex(txt, alg='SHA-256'){
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest(alg, enc.encode(txt));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-function renderHashTool(container){
-  container.innerHTML = `
-    <input id="hIn" placeholder="نص لحسابه"><div style="height:8px"></div>
-    <div class="row"><button id="sha1">SHA-1</button><button id="sha256" class="small">SHA-256</button><button id="md5" class="small">MD5 (polyfill)</button><button id="copy" class="small">Copy</button></div>
-    <div style="height:8px"></div><pre id="hOut">-</pre>
-  `;
-  container.querySelector('#sha1').onclick = async ()=> container.querySelector('#hOut').textContent = await shaHex(container.querySelector('#hIn').value,'SHA-1');
-  container.querySelector('#sha256').onclick = async ()=> container.querySelector('#hOut').textContent = await shaHex(container.querySelector('#hIn').value,'SHA-256');
-  // MD5 via small JS fallback (not cryptographically secure here: use lib; but implement simple)
-  container.querySelector('#md5').onclick = ()=> {
-    // tiny md5 implementation (lightweight)
-    if(!window.md5) {
-      // load tiny-md5 from CDN
-      const sc = document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js';
-      sc.onload = ()=> { window.md5=true; container.querySelector('#hOut').textContent = md5(container.querySelector('#hIn').value); };
-      document.body.appendChild(sc);
-    } else container.querySelector('#hOut').textContent = md5(container.querySelector('#hIn').value);
+// Visual loading simulation
+async function simulateCharge(){
+  if(!validInput()) return;
+  // reset visuals
+  resultArea.style.display='none';
+  progressWrap.style.display='block';
+  progressBar.style.width='0%';
+
+  // simulated staged progress with delays
+  const steps = [20, 45, 70, 88, 100];
+  for(let i=0;i<steps.length;i++){
+    await new Promise(r=> setTimeout(r, 700 + Math.random()*600));
+    progressBar.style.width = steps[i] + '%';
+  }
+
+  // build result (fake)
+  const payload = {
+    playerId: playerId.value.trim(),
+    playerName: playerName.value.trim() || '(غير مُدخل)',
+    amountUC: ucAmount.value,
+    region: region.value,
+    transactionId: 'SIM-' + Math.random().toString(36).substring(2,10).toUpperCase(),
+    timestamp: new Date().toLocaleString()
   };
-  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#hOut').textContent).then(()=>alert('نُسخ'));
+
+  // show result
+  progressWrap.style.display='none';
+  resultArea.style.display='block';
+  resultText.textContent = JSON.stringify(payload, null, 2);
+
+  // show modal
+  modalMsg.textContent = `تم شحن ${payload.amountUC} UC للحساب ${payload.playerName} (ID ${payload.playerId}) — هذه محاكاة فقط.`;
+  modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+
+  // optional small confetti (lightweight)
+  launchConfetti();
 }
 
-/* ---------- Password generator ---------- */
-function renderPasswordTool(container){
-  container.innerHTML = `
-    <div class="row"><input id="plen" type="number" value="16" min="6" max="128"><select id="ptype"><option value="all">All</option><option value="nosym">No symbols</option><option value="letters">Letters</option></select></div>
-    <div style="height:8px"></div>
-    <div class="row"><button id="gen">Generate</button><button id="copy" class="small">Copy</button></div>
-    <div style="height:8px"></div><input id="pOut" readonly><div style="height:8px"></div><div class="meter"><i id="pMeter" style="display:block;height:10px;width:0%;background:#f97316"></i></div>
-  `;
-  const gen = ()=> {
-    const len = parseInt(container.querySelector('#plen').value)||16;
-    const mode = container.querySelector('#ptype').value;
-    const sets = { all: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{};:,.<>?', nosym: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' };
-    const chars = sets[mode];
-    const arr = new Uint32Array(len);
-    crypto.getRandomValues(arr);
-    let out = ''; for(let i=0;i<len;i++) out += chars[arr[i] % chars.length];
-    container.querySelector('#pOut').value = out;
-    const s = strengthScore(out);
-    container.querySelector('#pMeter').style.width = (s/5*100)+'%'; container.querySelector('#pMeter').style.background = s<=2? '#f97316' : (s===3? '#facc15' : '#22c55e');
-  };
-  container.querySelector('#gen').onclick = gen;
-  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#pOut').value).then(()=>alert('نُسخ'));
-  function strengthScore(p){ let sc=0; if(p.length>=8) sc++; if(p.length>=12) sc++; if(/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++; if(/[0-9]/.test(p)) sc++; if(/[^A-Za-z0-9]/.test(p)) sc++; return Math.min(sc,5); }
-}
-
-/* ---------- JWT Decoder ---------- */
-function b64uDecode(s){ try{ s = s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); } catch(e){ return null; } }
-function renderJWT(container){
-  container.innerHTML = `
-    <input id="jIn" placeholder="JWT (header.payload.signature)"><div style="height:8px"></div>
-    <div class="row"><button id="dec">Decode</button><button id="copy" class="small">Copy Payload</button></div>
-    <div style="height:8px"></div><div class="muted">Header</div><pre id="jHead">-</pre><div class="muted">Payload</div><pre id="jPayload">-</pre>
-  `;
-  container.querySelector('#dec').onclick = ()=> {
-    const v = container.querySelector('#jIn').value.trim();
-    if(!v) return alert('ضع JWT');
-    const p = v.split('.');
-    container.querySelector('#jHead').textContent = b64uDecode(p[0])||'—';
-    container.querySelector('#jPayload').textContent = b64uDecode(p[1])||'—';
-  };
-  container.querySelector('#copy').onclick = ()=> {
-    const s = container.querySelector('#jPayload').textContent;
-    if(!s) return alert('لا يوجد payload'); navigator.clipboard.writeText(s).then(()=>alert('نُسخ'));
-  };
-}
-
-/* ---------- QR Generator (Google Charts) ---------- */
-function renderQR(container){
-  container.innerHTML = `
-    <input id="qrIn" placeholder="https://example.com أو WIFI:T:WPA;S:SSID;P:pass;;"><div style="height:8px"></div>
-    <div class="row"><button id="gen">Generate</button><button id="save" class="small">Download</button></div>
-    <div style="height:8px"></div><div id="qrBox" style="text-align:center"></div>
-  `;
-  const genImg = (text)=> {
-    const u = encodeURIComponent(text);
-    return `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${u}&choe=UTF-8`;
-  };
-  container.querySelector('#gen').onclick = ()=> {
-    const v = container.querySelector('#qrIn').value.trim(); if(!v) return alert('أدخل نص');
-    const src = genImg(v);
-    container.querySelector('#qrBox').innerHTML = `<img id="qrImg" src="${src}" style="max-width:260px;border-radius:8px">`;
-  };
-  container.querySelector('#save').onclick = ()=> {
-    const img = container.querySelector('#qrImg'); if(!img) return alert('أنشئ QR أولاً'); const a=document.createElement('a'); a.href=img.src; a.download='qr.png'; document.body.appendChild(a); a.click(); a.remove();
-  };
-}
-
-/* ---------- Image → Base64 (client-side) ---------- */
-function renderImageToBase64(container){
-  container.innerHTML = `
-    <input id="imgFile" type="file" accept="image/*"><div style="height:8px"></div>
-    <div class="row"><button id="conv">Convert</button><button id="save" class="small">Download Base64.txt</button></div>
-    <div style="height:8px"></div><pre id="imgOut" style="max-height:220px;overflow:auto">-</pre>
-  `;
-  container.querySelector('#conv').onclick = ()=> {
-    const f = container.querySelector('#imgFile').files[0]; if(!f) return alert('اختر صورة');
-    const reader = new FileReader();
-    reader.onload = ()=> { container.querySelector('#imgOut').textContent = reader.result.split(',')[1]; };
-    reader.readAsDataURL(f);
-  };
-  container.querySelector('#save').onclick = ()=> {
-    const txt = container.querySelector('#imgOut').textContent; if(!txt) return alert('لا بيانات'); const blob = new Blob([txt],{type:'text/plain'}); const url=URL.createObjectURL(blob);
-    const a=document.createElement('a'); a.href=url; a.download='image_base64.txt'; a.click(); URL.revokeObjectURL(url);
-  };
-}
-
-/* ---------- Generic generator for gen-type tools ---------- */
-function renderGenericGenerator(container, tool){
-  container.innerHTML = `<div class="muted">مولّد: ${tool.name}</div><div style="height:8px"></div><div class="row"><button id="gbtn">Generate</button><button id="copy" class="small">Copy</button></div><div style="height:8px"></div><pre id="gOut">-</pre>`;
-  container.querySelector('#gbtn').onclick = ()=> {
-    let out = '';
-    if(tool.id==='t13') out = lorem(3,8);
-    else if(tool.id==='t15') out = uuidv4();
-    else if(tool.id==='t20') out = lorem(1,3);
-    else if(tool.id==='t100') out = randomQuote();
-    else out = `مولد عام: ${tool.name}`;
-    container.querySelector('#gOut').textContent = out;
-  };
-  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#gOut').textContent).then(()=>alert('نُسخ'));
-}
-
-/* ---------- Net tools (simple behavior; may need internet) ---------- */
-function renderNetTool(container, tool){
-  container.innerHTML = `<div class="muted">أداة شبكات: ${tool.name}</div><div style="height:8px"></div><div class="row"><input id="nIn" placeholder="اتركه فارغاً لاكتشاف جهازك"><button id="run">Check</button></div><div style="height:8px"></div><pre id="nOut">—</pre>`;
-  container.querySelector('#run').onclick = async ()=>{
-    const val = container.querySelector('#nIn').value.trim();
-    const out = container.querySelector('#nOut');
-    try{
-      if(tool.id==='t41'){
-        let target = val;
-        if(!target){
-          const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json(); target = j.ip;
-        }
-        const infoRes = await fetch('https://ipapi.co/' + target + '/json/');
-        const info = await infoRes.json();
-        out.textContent = `IP: ${info.ip}\nCountry: ${info.country_name}\nCity: ${info.city}\nISP: ${info.org}\nRaw:\n${JSON.stringify(info,null,2)}`;
-      } else {
-        out.textContent = `هذه أداة شبكة تجريبية: ${tool.name}\n(قد تحتاج API خارجي)`;
-      }
-    }catch(e){ out.textContent = 'خطأ: '+e.message + '\nملاحظة: بعض الخدمات قد تمنع CORS في المتصفح.'; }
-  };
-}
-
-/* ---------- Utilities used by various tools ---------- */
-function lorem(minPara=1,words=50){
-  const L = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".split(' ');
-  const make = (n)=> Array.from({length:n}, ()=> L[Math.floor(Math.random()*L.length)]).join(' ');
-  return Array.from({length:minPara}, ()=> make(words)).join('\n\n');
-}
-function uuidv4(){ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){ const r=Math.random()*16|0; const v=c=='x'?r:(r&0x3|0x8); return v.toString(16); }); }
-function randomQuote(){ const q=["Code is like humor. When you have to explain it, it’s bad.","Fix the cause, not the symptom.","Simplicity is the soul of efficiency.","First, solve the problem. Then, write the code.","Make it work, make it right, make it fast."]; return q[Math.floor(Math.random()*q.length)]; }
-
-/* ---------- init: handle direct click on tool items (delegated) ---------- */
-document.addEventListener('click', (e)=> {
-  const b = e.target.closest('.tool-btn');
-  // handled above
+// reset
+resetBtn.addEventListener('click', ()=>{
+  playerId.value=''; playerName.value=''; ucAmount.value='300'; region.value='Asia';
+  progressWrap.style.display='none'; resultArea.style.display='none'; progressBar.style.width='0%';
 });
 
-/* ---------- nice: open first tool on load? no, show welcome ---------- */
+// main
+chargeBtn.addEventListener('click', simulateCharge);
+closeModal.addEventListener('click', ()=>{
+  modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
+});
+
+// tiny confetti effect (canvas-based, lightweight)
+function launchConfetti(){
+  const w = window.innerWidth, h = window.innerHeight;
+  const cvs = document.createElement('canvas'); cvs.style.position='fixed'; cvs.style.left=0; cvs.style.top=0; cvs.style.pointerEvents='none';
+  cvs.width = w; cvs.height = h; cvs.style.zIndex = 9998;
+  document.body.appendChild(cvs);
+  const ctx = cvs.getContext('2d');
+  const pieces = [];
+  const colors = ['#f0c75e','#d9a441','#ffd97a','#ffffff','#f39c12'];
+  for(let i=0;i<80;i++){
+    pieces.push({
+      x: Math.random()*w,
+      y: -20 - Math.random()*h*0.2,
+      vx: (Math.random()-0.5)*6,
+      vy: 2 + Math.random()*4,
+      r: 6+Math.random()*8,
+      c: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      vr: (Math.random()-0.5)*10
+    });
+  }
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of pieces){
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+      ctx.restore();
+    }
+    t++;
+    if(t<180) requestAnimationFrame(frame);
+    else { document.body.removeChild(cvs); }
+  }
+  frame();
+}
+
+/* Accessibility: allow Enter on ID to submit */
+playerId.addEventListener('keydown', (e)=> { if(e.key==='Enter') simulateCharge(); });
+
 </script>
+
 </body>
 </html>
