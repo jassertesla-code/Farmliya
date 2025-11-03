@@ -1,60 +1,348 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎮 Cloud Games</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-    h1 {
-      font-size: 40px;
-      color: #00ffcc;
-      margin-bottom: 40px;
-    }
-    .game {
-      background: #222;
-      border: 2px solid #00ffcc;
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px auto;
-      width: 250px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .game:hover {
-      background: #00ffcc;
-      color: #111;
-      transform: scale(1.05);
-    }
-    footer {
-      margin-top: 50px;
-      font-size: 14px;
-      color: #888;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Cloud Games — Arcade 2D</title>
+<style>
+  html,body { height:100%; margin:0; padding:0; background:#0b1020; color:#fff; font-family:Arial, Helvetica, sans-serif; }
+  #game-container { width:100%; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .overlay-ui { position: absolute; z-index: 1000; top: 12px; left: 12px; right:12px; display:flex; justify-content:space-between; pointer-events:none; }
+  .panel { background: rgba(0,0,0,0.35); padding:8px 12px; border-radius:8px; font-size:14px; pointer-events:auto; }
+  .touch-controls { position: absolute; z-index:1000; bottom:18px; left:12px; right:12px; display:flex; justify-content:space-between; pointer-events:none; }
+  .btn-touch { width:74px; height:74px; background:rgba(255,255,255,0.06); border-radius:16px; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#fff; pointer-events:auto; }
+  @media (min-width:900px) { .btn-touch { display:none; } }
+</style>
 </head>
 <body>
+<div id="game-container"></div>
 
-  <h1>☁️ Cloud Games</h1>
-  <p>اختر لعبة لتجربها مباشرة 🎮</p>
+<div class="overlay-ui">
+  <div class="panel" id="scorePanel">Score: 0</div>
+  <div style="display:flex;gap:8px;">
+    <div class="panel" id="lifePanel">Life: 5</div>
+    <div class="panel" id="levelPanel">Level: 1</div>
+  </div>
+</div>
 
-  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/flappy-bird/index.html')">🐤 Flappy Bird</div>
-  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/classic-snake/index.html')">🐍 Snake</div>
-  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/tetris-99/index.html')">🧱 Tetris</div>
-  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/mario-html5/index.html')">🍄 Mario Clone</div>
+<div class="touch-controls">
+  <div style="display:flex;gap:10px; pointer-events:none;">
+    <div id="leftBtn" class="btn-touch">◀</div>
+    <div id="rightBtn" class="btn-touch">▶</div>
+  </div>
+  <div style="display:flex;gap:10px; pointer-events:none;">
+    <div id="jumpBtn" class="btn-touch">▲</div>
+    <div id="shootBtn" class="btn-touch">●</div>
+  </div>
+</div>
 
-  <footer>By jassertesla-code ⚡</footer>
+<!-- Phaser 3 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 
-  <script>
-    function openGame(url) {
-      window.open(url, '_blank');
+<script>
+/*
+  بسيط لكن قوي: لعبة منصة أركيد بسيطة
+  - حركة يسار/يمين، قفز، إطلاق
+  - أعداء يتبعون اللاعب بشكل بسيط
+  - جمع نقاط (coins)
+  - HUD ودرجات وصعوبة متزايدة
+  - دعم لمس الموبايل (الأزرار الظاهرة)
+*/
+
+// إعداد اللعبة
+const config = {
+  type: Phaser.AUTO,
+  parent: 'game-container',
+  width: Math.min(window.innerWidth, 1000),
+  height: Math.min(window.innerHeight, 700),
+  backgroundColor: '#0b1020',
+  physics: {
+    default: 'arcade',
+    arcade: { gravity: { y: 900 }, debug: false }
+  },
+  scene: { preload, create, update }
+};
+
+const game = new Phaser.Game(config);
+
+// متغيرات عالمية
+let player, cursors, bullets, lastFired = 0, enemies, coins;
+let score = 0, life = 5, level = 1;
+let leftBtn, rightBtn, jumpBtn, shootBtn;
+let moveLeft = false, moveRight = false, jumpPressed = false, shootPressed = false;
+
+function preload() {
+  // نولد textures برمجيا لتفادي الاعتماد على ملفات خارجية
+  this.load.image('bg', null); // placeholder
+}
+
+function create() {
+  const scene = this;
+
+  // خلفية بسيطة متدرجة + سحب ــ نولدها برمجياً
+  const g = this.add.graphics();
+  const w = this.scale.width, h = this.scale.height;
+  const gradient = g.createLinearGradient(0, 0, 0, h);
+  // رسم خلفية بلونين (ستايل)
+  g.fillStyle(0x071428, 1).fillRect(0,0,w,h);
+  // تلال بعيدة
+  for (let i = 0; i < 6; i++) {
+    g.fillStyle(0x0c2a3a + i*200, 0.18);
+    g.fillEllipse(w* (i/6 + 0.05), h - 50 - i*10, w/2.8, 200);
+  }
+
+  // أرضية من بلاتفورمز
+  const platforms = this.physics.add.staticGroup();
+  const ground = platforms.create(w/2, h - 20, null).setScale(2).refreshBody();
+  ground.width = w; // not used but keep reference
+  // إضافات بلاتفورم متدرجة
+  for (let x = 0; x < 6; x++) {
+    platforms.create(120 + x*140, h - 120 - (x%3)*40, null).setScale(1).refreshBody();
+  }
+
+  // إنشاء لاعب: نعتمد على مربع ملون ومولد texture
+  this.addPlayerTexture = () => {
+    const g = this.make.graphics({ x:0, y:0, add:false });
+    g.fillStyle(0x00ffcc, 1);
+    g.fillRoundedRect(0,0,40,48,6);
+    g.fillStyle(0x003b2e, 1);
+    g.fillRect(8,12,24,6); // وجه
+    g.generateTexture('playerTex', 40, 48);
+    g.destroy();
+  };
+  this.addPlayerTexture();
+
+  player = this.physics.add.sprite(100, h - 150, 'playerTex');
+  player.setBounce(0.1);
+  player.setCollideWorldBounds(true);
+  player.body.setSize(36,46).setOffset(2,2);
+
+  // مجموعة رصاص
+  bullets = this.physics.add.group({ defaultKey: null, maxSize: 12 });
+
+  // أعداء
+  enemies = this.physics.add.group();
+  for (let i = 0; i < 3; i++) {
+    const e = createEnemy(scene, 380 + i*200, h - 180 - (i%2)*40);
+    enemies.add(e);
+  }
+
+  // عملات
+  coins = this.physics.add.group();
+  for (let i = 0; i < 6; i++) {
+    const c = createCoin(scene, 180 + i*110, h - 220 - (i%3)*30);
+    coins.add(c);
+  }
+
+  // تصادم
+  this.physics.add.collider(player, platforms);
+  this.physics.add.collider(enemies, platforms);
+  this.physics.add.collider(coins, platforms);
+  this.physics.add.collider(bullets, platforms, (b) => b.destroy());
+  this.physics.add.overlap(player, coins, collectCoin, null, this);
+  this.physics.add.overlap(bullets, enemies, hitEnemy, null, this);
+  this.physics.add.overlap(player, enemies, enemyHitPlayer, null, this);
+
+  // كاميرا تتبع (محدود)
+  this.cameras.main.startFollow(player, true, 0.08, 0.08);
+
+  // تحكمات كيبورد
+  cursors = this.input.keyboard.createCursorKeys();
+  this.input.keyboard.addKeys('W,A,S,D,SPACE');
+
+  // أزرار اللمس
+  leftBtn = document.getElementById('leftBtn');
+  rightBtn = document.getElementById('rightBtn');
+  jumpBtn = document.getElementById('jumpBtn');
+  shootBtn = document.getElementById('shootBtn');
+
+  addTouchHandler(leftBtn, () => moveLeft = true, () => moveLeft = false);
+  addTouchHandler(rightBtn, () => moveRight = true, () => moveRight = false);
+  addTouchHandler(jumpBtn, () => jumpPressed = true, () => jumpPressed = false);
+  addTouchHandler(shootBtn, () => shootPressed = true, () => shootPressed = false);
+
+  // HUD init
+  updateHUD();
+
+  // تعليمات قصيرة
+  scene.input.keyboard.on('keydown-SPACE', () => { attemptShoot(scene); });
+}
+
+// دالة لإنشاء عدو بسيط
+function createEnemy(scene, x, y) {
+  // نولد texture للعدو
+  const g = scene.make.graphics({ add:false });
+  g.fillStyle(0xff5c5c, 1);
+  g.fillRoundedRect(0,0,36,36,8);
+  g.generateTexture('enemyTex' + x, 36,36);
+  g.destroy();
+
+  const e = scene.physics.add.sprite(x, y, 'enemyTex' + x);
+  e.setCollideWorldBounds(true);
+  e.setBounce(0.2);
+  e.speed = 40 + Math.random()*60;
+  e.health = 2 + Math.floor(Math.random()*3);
+  e.setVelocityX((Math.random() < 0.5 ? -1:1) * e.speed);
+  return e;
+}
+
+// دالة لإنشاء عملة
+function createCoin(scene, x, y) {
+  const g = scene.make.graphics({ add:false });
+  g.fillStyle(0xffd54a, 1);
+  g.fillCircle(10,10,10);
+  g.generateTexture('coinTex' + x, 20,20);
+  g.destroy();
+  const c = scene.physics.add.sprite(x, y, 'coinTex' + x);
+  c.body.setAllowGravity(false);
+  return c;
+}
+
+// جمع عملة
+function collectCoin(player, coin) {
+  coin.disableBody(true,true);
+  score += 10;
+  updateHUD();
+}
+
+// إصابة عدو بالرصاص
+function hitEnemy(bullet, enemy) {
+  bullet.destroy();
+  enemy.health -= 1;
+  if (enemy.health <= 0) {
+    enemy.destroy();
+    score += 25;
+    updateHUD();
+    // respawn بعد ثوان
+    this = bullet.scene;
+    this.time.delayedCall(1800, () => {
+      const e = createEnemy(this, enemy.x - 20 + Math.random()*300, enemy.y - 50);
+      enemies.add(e);
+    });
+  } else {
+    enemy.setTint(0xffb3b3);
+    bullet.scene.time.delayedCall(200, () => enemy.clearTint());
+  }
+}
+
+// عندما يلمس العدو اللاعب
+function enemyHitPlayer(playerObj, enemy) {
+  // دفع للخلف وإصابة
+  enemy.setVelocityX(-100);
+  life -= 1;
+  updateHUD();
+  playerObj.setTint(0xff7f7f);
+  setTimeout(()=>playerObj.clearTint(), 300);
+  if (life <= 0) {
+    // Game Over
+    playerObj.disableBody(true,true);
+    showGameOver(enemy.scene);
+  }
+}
+
+// إطلاق رصاصة
+function attemptShoot(scene) {
+  const time = scene.time.now;
+  if (time - lastFired < 300) return;
+  lastFired = time;
+  const b = bullets.create(player.x + (player.flipX ? -20 : 20), player.y, null);
+  // نولد تصميم رصاصة
+  const g = scene.make.graphics({ add:false });
+  g.fillStyle(0xffff66, 1);
+  g.fillRect(0,0,8,4);
+  g.generateTexture('bulletTex' + time, 8,4);
+  g.destroy();
+  b.setTexture('bulletTex' + time);
+  b.body.allowGravity = false;
+  b.setVelocityX(player.flipX ? -420 : 420);
+  scene.time.delayedCall(2000, ()=> b.destroy());
+}
+
+// تحديث HUD
+function updateHUD() {
+  document.getElementById('scorePanel').innerText = 'Score: ' + score;
+  document.getElementById('lifePanel').innerText = 'Life: ' + life;
+  document.getElementById('levelPanel').innerText = 'Level: ' + level;
+}
+
+// عرض Game Over وRestart
+function showGameOver(scene) {
+  const w = scene.scale.width, h = scene.scale.height;
+  const box = scene.add.rectangle(scene.cameras.main.scrollX + w/2, h/2, 380, 180, 0x111111, 0.95).setDepth(1000);
+  const txt = scene.add.text(box.x - 140, box.y - 40, 'Game Over', { fontSize: '28px', color:'#fff' }).setDepth(1001);
+  const scr = scene.add.text(box.x - 140, box.y - 5, 'Score: ' + score, { fontSize: '18px', color:'#ddd' }).setDepth(1001);
+  const btn = scene.add.text(box.x - 60, box.y + 35, 'Replay', { fontSize: '18px', color:'#00ffcc', backgroundColor:'#0a2540', padding:8 }).setDepth(1001).setInteractive();
+  btn.on('pointerdown', ()=> {
+    scene.scene.restart();
+    score = 0; life = 5; level = 1;
+    updateHUD();
+  });
+}
+
+// مساعدة في اللمس
+function addTouchHandler(element, onStart, onEnd) {
+  if (!element) return;
+  element.addEventListener('touchstart', (e) => { e.preventDefault(); onStart(); }, { passive:false });
+  element.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(); });
+  element.addEventListener('touchend', (e) => { e.preventDefault(); onEnd(); }, { passive:false });
+  element.addEventListener('mouseup', (e) => { e.preventDefault(); onEnd(); });
+}
+
+// تحديث كل فريم
+function update(time, delta) {
+  // حركات إدخال عام
+  const speed = 180 + (level-1)*10;
+  if (cursors.left.isDown || moveLeft || (this.input.keyboard.keys[65] && this.input.keyboard.keys[65].isDown)) {
+    player.setVelocityX(-speed);
+    player.flipX = true;
+  } else if (cursors.right.isDown || moveRight || (this.input.keyboard.keys[68] && this.input.keyboard.keys[68].isDown)) {
+    player.setVelocityX(speed);
+    player.flipX = false;
+  } else {
+    player.setVelocityX(0);
+  }
+
+  // قفز
+  if ((cursors.up.isDown || jumpPressed || this.input.keyboard.keys[87] && this.input.keyboard.keys[87].isDown) && player.body.onFloor()) {
+    player.setVelocityY(-420);
+  }
+
+  // إطلاق بالزر أو لمسة
+  if (shootPressed) attemptShoot(this);
+
+  // سلوك الأعداء: تتبع بسيط نحو اللاعب
+  enemies.children.iterate((e) => {
+    if (!e || !e.body) return;
+    const diff = player.x - e.x;
+    if (Math.abs(diff) < 350) {
+      const dir = diff > 0 ? 1 : -1;
+      e.setVelocityX(dir * e.speed * 0.6);
+    } else {
+      // patrol
+      if (e.body.blocked.right) e.setVelocityX(-e.speed);
+      if (e.body.blocked.left) e.setVelocityX(e.speed);
     }
-  </script>
+  });
+
+  // مستوى الصعوبة — كل 200 نقاط يزيد مستوى
+  const newLevel = Math.floor(score/200) + 1;
+  if (newLevel !== level) {
+    level = newLevel;
+    updateHUD();
+    // spawn more enemies
+    for (let i = 0; i < level; i++) {
+      const nx = player.x + 300 + Math.random()*400;
+      enemies.add(createEnemy(this, nx, player.y - 80));
+    }
+  }
+
+  // تنظيف رصاص خارج الشاشة
+  bullets.children.iterate((b) => {
+    if (b && (b.x < this.cameras.main.scrollX - 200 || b.x > this.cameras.main.scrollX + this.scale.width + 200)) {
+      b.destroy();
+    }
+  });
+}
+</script>
 </body>
 </html>
