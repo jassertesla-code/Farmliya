@@ -2,56 +2,59 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>موقع فرملية 🌿</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Cloud Games</title>
   <style>
     body {
-      background: linear-gradient(135deg, #d7f3e3, #b9e2c8);
+      background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+      color: white;
+      font-family: 'Poppins', sans-serif;
       text-align: center;
-      font-family: 'Tahoma', sans-serif;
-      padding-top: 60px;
+      padding: 30px;
     }
     h1 {
-      color: #216b4a;
+      font-size: 40px;
+      color: #00ffcc;
+      margin-bottom: 40px;
     }
-    img {
-      width: 250px;
+    .game {
+      background: #222;
+      border: 2px solid #00ffcc;
       border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      margin-bottom: 30px;
-    }
-    .btn {
-      display: inline-block;
-      margin: 15px 0;
-      background: #2e8b57;
-      color: white;
-      padding: 12px 25px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 18px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 250px;
+      cursor: pointer;
       transition: 0.3s;
     }
-    .btn:hover {
-      background: #1e6842;
+    .game:hover {
+      background: #00ffcc;
+      color: #111;
+      transform: scale(1.05);
     }
-    .btn-facebook {
-      background: #1877f2;
-    }
-    .video-section {
+    footer {
       margin-top: 50px;
-    }
-    video {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      font-size: 14px;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <h1>مرحبًا بكم في موقع فرملية 🌿</h1>
-  <img src="logo.png" alt="شعار فرملية">
-  <p>استكشف المزيد عبر الرابط أدناه 👇</p>
-  <a href="https://mgbinvest.com.ng/YXIvNG41Ujd0MmMxWjFONDA=" target="_blank" class="btn">اضغط هنا للدخول</a>
-  <br>
-  <a href="https://www.facebook.com/chelsea.fc.9047" target="_blank" class="btn btn-facebook">تواصل معنا عبر فيسبوك 💬</a>
 
+  <h1>☁️ Cloud Games</h1>
+  <p>اختر لعبة لتجربها مباشرة 🎮</p>
+
+  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/flappy-bird/index.html')">🐤 Flappy Bird</div>
+  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/classic-snake/index.html')">🐍 Snake</div>
+  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/tetris-99/index.html')">🧱 Tetris</div>
+  <div class="game" onclick="openGame('https://games.crazygames.com/en_US/mario-html5/index.html')">🍄 Mario Clone</div>
+
+  <footer>By jassertesla-code ⚡</footer>
+
+  <script>
+    function openGame(url) {
+      window.open(url, '_blank');
+    }
+  </script>
+</body>
+</html>
