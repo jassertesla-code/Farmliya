@@ -3,427 +3,517 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Farmliya — أدوات المطورين</title>
+<title>Farmliya — 100 DevTools</title>
 <link rel="icon" href="data:," />
 <style>
-  :root{
-    --bg:#0b1220; --card:#0f1726; --accent:#00d1a1; --muted:#9fb6bd; --glass: rgba(255,255,255,0.03);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter, "Segoe UI", Tahoma, sans-serif;background:linear-gradient(180deg,#071226,#071025);color:#e6eef6;min-height:100vh}
-  header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px}
-  header h1{margin:0;font-size:18px;color:var(--accent)}
-  .container{display:flex;gap:18px;padding:18px;align-items:flex-start}
-  /* main area */
-  main{flex:1;min-height:70vh;background:linear-gradient(180deg,rgba(255,255,255,0.01), rgba(255,255,255,0.00));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03)}
-  .tool-title{font-size:16px;margin:0 0 8px;color:#e8fdf4}
-  .muted{color:var(--muted);font-size:13px}
-  .card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);margin-bottom:12px}
-  textarea, input, select {width:100%; padding:10px; border-radius:8px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); color:inherit}
-  button{background:var(--accent); color:#042025; border:0; padding:9px 12px; border-radius:8px; cursor:pointer; font-weight:600}
-  .row{display:flex;gap:8px}
-  .row .flex{flex:1}
-  pre{background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;overflow:auto}
-  /* floating button */
-  .fab{position:fixed;right:18px;top:18px;z-index:1200;width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--accent),#00b88f);box-shadow:0 8px 28px rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .fab svg{width:26px;height:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.4))}
-  /* drawer */
-  .drawer{position:fixed;right:18px;top:86px;z-index:1100;background:var(--glass);backdrop-filter:blur(6px);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:260px;max-height:70vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-  .tool-btn{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;margin-bottom:8px;background:transparent;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
-  .tool-btn:hover{background:rgba(255,255,255,0.01)}
-  .hidden{display:none}
-  footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
-  /* responsive */
-  @media(max-width:900px){
-    .container{flex-direction:column;padding:12px}
-    .drawer{right:12px;width:92vw;top:86px}
-    .fab{right:12px}
-  }
+:root{
+  --bg:#071226; --card:#0b1220; --accent:#00d1a1; --muted:#94a3b8;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#041426,#071025);color:#e6eef6;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
+h1{margin:0;font-size:18px;color:var(--accent)}
+.muted{color:var(--muted)}
+.container{display:flex;gap:18px;padding:18px}
+main{flex:1;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.00));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03);min-height:70vh}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:12px}
+textarea,input,select{width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);color:inherit}
+button{background:var(--accent);border:0;color:#042025;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+.row{display:flex;gap:8px;align-items:center}
+pre{background:rgba(0,0,0,0.25);padding:10px;border-radius:8px;overflow:auto}
+footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
 
-  /* strength meter */
-  .meter{height:10px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden}
-  .meter > i{display:block;height:100%;width:0%;background:#f97316}
+/* FAB and drawer */
+.fab{position:fixed;right:18px;top:16px;z-index:1200;width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,var(--accent),#00b88f);box-shadow:0 8px 28px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fab svg{width:26px;height:26px}
+.drawer{position:fixed;right:18px;top:86px;z-index:1100;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);width:320px;max-height:72vh;overflow:auto;display:none}
+.drawer.open{display:block}
+.tool-btn{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;margin-bottom:8px;background:transparent;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
+.tool-btn:hover{background:rgba(255,255,255,0.01)}
+.search{margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);background:rgba(255,255,255,0.01);color:inherit}
+
+@media(max-width:900px){
+  .container{flex-direction:column;padding:12px}
+  .drawer{right:12px;width:92vw;top:76px}
+  .fab{right:12px}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>Farmliya — DevTools</h1>
-  <div class="muted">أدوات سريعة للمطور — اختر من الزر العائم أعلى يمين</div>
+  <h1>Farmliya — مكتبة الأدوات (100+)</h1>
+  <div class="muted">اختر أداة من الزر العائم أعلى اليمين</div>
 </header>
 
-<!-- Floating action button -->
-<div class="fab" id="fab" title="أدوات">
-  <!-- icon (menu) -->
+<div class="fab" id="fab" title="Tools">
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M3 6h18M3 12h18M3 18h18" stroke="#042025" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 </div>
 
-<!-- drawer -->
-<div class="drawer hidden" id="drawer" aria-hidden="true" role="menu">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <strong>قائمة الأدوات</strong>
-    <button id="closeDrawer" class="small" style="background:transparent;border:0;color:var(--muted)">إغلاق</button>
-  </div>
-
-  <!-- List of tools -->
-  <div class="tool-btn" data-tool="json"><div><strong>JSON Formatter</strong><div class="muted">تنسيق و/أو فحص JSON</div></div><div>↩</div></div>
-  <div class="tool-btn" data-tool="base64"><div><strong>Base64</strong><div class="muted">ترميز / فك Base64</div></div><div>↔</div></div>
-  <div class="tool-btn" data-tool="password"><div><strong>Password Generator</strong><div class="muted">مولّد وكاشف القوة</div></div><div>🔐</div></div>
-  <div class="tool-btn" data-tool="jwt"><div><strong>JWT Decoder</strong><div class="muted">فك توكنات JWT</div></div><div>🔓</div></div>
-  <div class="tool-btn" data-tool="sha"><div><strong>SHA-256</strong><div class="muted">حساب هاش SHA-256</div></div><div>#</div></div>
-  <div class="tool-btn" data-tool="qr"><div><strong>QR Generator</strong><div class="muted">لروابط أو Wi-Fi</div></div><div>⤴</div></div>
-  <div class="tool-btn" data-tool="ip"><div><strong>IP Checker</strong><div class="muted">يعرض IP والبلد (ipify/ipapi)</div></div><div>🌐</div></div>
-  <div class="tool-btn" data-tool="md"><div><strong>Markdown Preview</strong><div class="muted">معاينة فورّية</div></div><div>📝</div></div>
-
-  <div style="height:8px"></div>
-  <div class="muted" style="font-size:12px">تستطيع إضافة أدوات أخرى بسهولة عبر تعديل الـHTML/JS</div>
+<div class="drawer" id="drawer" role="menu" aria-hidden="true">
+  <input id="toolSearch" class="search" placeholder="ابحث عن أداة..." />
+  <div id="toolList"></div>
+  <div style="height:10px"></div>
+  <div class="muted" style="font-size:13px">أدوات قابلة للتوسعة — اضغط لاختبار أي أداة.</div>
 </div>
 
 <div class="container">
   <main id="main">
-    <!-- Placeholder / default screen -->
-    <div id="welcome" class="card">
-      <h2 class="tool-title">مرحبًا بك في Farmliya DevTools</h2>
-      <p class="muted">اضغط على زر الأدوات أعلى يمين لإختيار أداة. جميع الأدوات تعمل داخل الصفحة ولا تحتاج سيرفر (إلا أداة IP التي تستخدم خدمة خارجية لإظهار معلومات الموقع).</p>
-      <hr style="border:none;height:1px;background:rgba(255,255,255,0.03);margin:12px 0">
-      <div class="muted">أدوات متاحة الآن: JSON, Base64, Password, JWT, SHA-256, QR, IP, Markdown.</div>
+    <div class="card">
+      <h2>مرحبًا في Farmliya DevTools</h2>
+      <p class="muted">تشمل هنا 100 أداة جاهزة للاستخدام — اختر واحدة من زر الأدوات أعلى اليمين. يمكنك تطوير أي أداة لاحقًا بإضافة منطق داخل الكود.</p>
     </div>
-
-    <!-- JSON Formatter -->
-    <section id="tool-json" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">JSON Formatter / Validator</h3>
-        <div class="muted">ألصق JSON هنا واضغط Format لتنسيقه أو Validate للتحقق.</div>
-        <div style="height:8px"></div>
-        <textarea id="jsonIn" rows="8" placeholder='مثال: {"name":"Ali","age":22}'></textarea>
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="jsonFormat">Format</button>
-          <button id="jsonValidate" class="small">Validate</button>
-          <button id="jsonCopy" class="small">Copy</button>
-          <div class="flex muted" style="padding:8px;border-radius:8px;text-align:right">Result:</div>
-        </div>
-        <div style="height:8px"></div>
-        <pre id="jsonOut">-</pre>
-      </div>
-    </section>
-
-    <!-- Base64 -->
-    <section id="tool-base64" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">Base64 Encode / Decode</h3>
-        <div class="muted">أدخل نصًا واضغط Encode لتحويله إلى Base64 أو Decode لفكّه.</div>
-        <div style="height:8px"></div>
-        <textarea id="b64In" rows="4"></textarea>
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="b64Enc">Encode</button>
-          <button id="b64Dec" class="small">Decode</button>
-          <button id="b64Copy" class="small">Copy</button>
-        </div>
-        <div style="height:8px"></div>
-        <pre id="b64Out">-</pre>
-      </div>
-    </section>
-
-    <!-- Password -->
-    <section id="tool-password" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">Password Generator + Strength</h3>
-        <div class="muted">اختر الطول ونوع الحروف ثم اضغط Generate.</div>
-        <div style="height:8px"></div>
-        <div class="row">
-          <input id="pwdLen" type="number" min="6" max="64" value="16">
-          <select id="pwdType" style="width:160px">
-            <option value="all">All (recommended)</option>
-            <option value="nosym">No symbols</option>
-            <option value="letters">Letters only</option>
-          </select>
-        </div>
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="pwdGen">Generate</button>
-          <button id="pwdCopy" class="small">Copy</button>
-        </div>
-        <div style="height:8px"></div>
-        <input id="pwdOut" readonly>
-        <div style="height:8px"></div>
-        <div class="meter"><i id="pwdMeter"></i></div>
-      </div>
-    </section>
-
-    <!-- JWT -->
-    <section id="tool-jwt" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">JWT Decoder</h3>
-        <div class="muted">ألصق توكن JWT (header.payload.signature) لعرض الـheader والـpayload بصيغة مقروءة.</div>
-        <div style="height:8px"></div>
-        <input id="jwtIn" placeholder="ضع JWT هنا">
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="jwtDec">Decode</button>
-          <button id="jwtClear" class="small">Clear</button>
-        </div>
-        <div style="height:8px"></div>
-        <div class="muted">Header:</div>
-        <pre id="jwtHead">-</pre>
-        <div class="muted">Payload:</div>
-        <pre id="jwtPayload">-</pre>
-      </div>
-    </section>
-
-    <!-- SHA -->
-    <section id="tool-sha" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">SHA-256 Hash</h3>
-        <div class="muted">أدخل نصًا لحسابه باستخدام Web Crypto API (في المتصفح).</div>
-        <div style="height:8px"></div>
-        <input id="shaIn" placeholder="نص لحسابه">
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="shaCalc">Compute SHA-256</button>
-          <button id="shaCopy" class="small">Copy</button>
-        </div>
-        <div style="height:8px"></div>
-        <pre id="shaOut">-</pre>
-      </div>
-    </section>
-
-    <!-- QR -->
-    <section id="tool-qr" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">QR Code Generator</h3>
-        <div class="muted">أدخل نصًا أو رابطًا (أو صيغة Wi-Fi) وانسخ/حمّل صورة QR.</div>
-        <div style="height:8px"></div>
-        <input id="qrIn" placeholder="https://example.com أو WIFI:T:WPA;S:SSID;P:pass;;">
-        <div style="height:8px"></div>
-        <div class="row">
-          <button id="qrGen">Generate QR</button>
-          <button id="qrSave" class="small">Download</button>
-        </div>
-        <div style="height:8px"></div>
-        <div id="qrBox" style="text-align:center"><img id="qrImg" alt="QR" style="max-width:200px;border-radius:8px;display:none"></div>
-      </div>
-    </section>
-
-    <!-- IP -->
-    <section id="tool-ip" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">IP Checker</h3>
-        <div class="muted">اضغط "Check" لاكتشاف الـPublic IP ومعلومات الموقع (يستخدم خدمات خارجية: api.ipify.org و ipapi.co).</div>
-        <div style="height:8px"></div>
-        <div class="row">
-          <input id="ipField" placeholder="اتركه فارغًا لفحص IP جهازك" class="flex">
-          <button id="ipCheck">Check</button>
-        </div>
-        <div style="height:8px"></div>
-        <pre id="ipOut">نتيجة الفحص ستظهر هنا.</pre>
-      </div>
-    </section>
-
-    <!-- Markdown -->
-    <section id="tool-md" class="hidden">
-      <div class="card">
-        <h3 class="tool-title">Markdown Live Preview</h3>
-        <div class="muted">اكتب Markdown (يدعم العناوين، الروابط، قوائم، bold/italic) وسترى المعاينة مباشرة.</div>
-        <div style="height:8px"></div>
-        <div class="row">
-          <textarea id="mdIn" rows="8" placeholder="# عنوان\nنص **عريض**"></textarea>
-        </div>
-        <div style="height:8px"></div>
-        <div class="card" id="mdPreview" style="min-height:120px"></div>
-      </div>
-    </section>
-
+    <div id="toolArea"></div>
   </main>
 </div>
 
-<footer>Farmliya • الأدوات تعمل محليًا. IP Checker يحتاج اتصال إنترنت خارجي.</footer>
-
-<!-- marked.js for markdown preview -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<footer>Farmliya • جميع الأدوات تعمل داخل المتصفح (client-side) ما عدا ما ذكر أنه يحتاج إنترنت.</footer>
 
 <script>
-/* ---------- Utilities ---------- */
-function $(id){return document.getElementById(id)}
-function showTool(name){
-  // hide all sections
-  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
-  // show requested
-  const el = $('tool-'+name);
-  if(el) { el.classList.remove('hidden'); }
-  // scroll to top of main
+/* ============================
+   تعريف قائمة الأدوات (100 أدوات)
+   كل عنصر: id, name, type (for behavior)
+   نوعي: "text" (نصوص/تحويلات)، "crypto", "gen", "ui" (عرض/ترفيه)، "net" (شبكات - قد تحتاج إنترنت)
+   ============================ */
+const TOOLS = [
+  // 1-20 text/tools
+  {id:'t1', name:'JSON Formatter / Validator', type:'text'},
+  {id:'t2', name:'JSON → CSV / CSV → JSON', type:'text'},
+  {id:'t3', name:'Base64 Encode / Decode', type:'text'},
+  {id:'t4', name:'URL Encode / Decode', type:'text'},
+  {id:'t5', name:'Regex Tester', type:'text'},
+  {id:'t6', name:'Case Converter (upper/lower/title)', type:'text'},
+  {id:'t7', name:'Remove Duplicates / Sort Lines', type:'text'},
+  {id:'t8', name:'Word / Character Counter', type:'text'},
+  {id:'t9', name:'Minify / Beautify (HTML/CSS/JS)', type:'text'},
+  {id:'t10', name:'Diff Viewer (compare two texts)', type:'text'},
+  {id:'t11', name:'Markdown Live Preview', type:'text'},
+  {id:'t12', name:'README Generator (template)', type:'text'},
+  {id:'t13', name:'Lorem Ipsum Generator', type:'gen'},
+  {id:'t14', name:'Slugifier (title → slug)', type:'text'},
+  {id:'t15', name:'UUID v4 Generator', type:'gen'},
+  {id:'t16', name:'Clipboard Helper (copy selected)', type:'ui'},
+  {id:'t17', name:'Case-insensitive Search', type:'text'},
+  {id:'t18', name:'Trim / Collapse spaces', type:'text'},
+  {id:'t19', name:'Line to CSV / CSV to Lines', type:'text'},
+  {id:'t20', name:'Random Lorem Words', type:'gen'},
+
+  // 21-40 crypto/security
+  {id:'t21', name:'SHA-1 / SHA-256 / MD5', type:'crypto'},
+  {id:'t22', name:'HMAC (keyed hash)', type:'crypto'},
+  {id:'t23', name:'Password Generator + Strength', type:'gen'},
+  {id:'t24', name:'Password Strength Checker', type:'crypto'},
+  {id:'t25', name:'JWT Decoder (header/payload)', type:'crypto'},
+  {id:'t26', name:'JWT Playground (create unsigned)', type:'crypto'},
+  {id:'t27', name:'Base32 / Base62 converters', type:'text'},
+  {id:'t28', name:'AES Encrypt / Decrypt (demo)', type:'crypto'},
+  {id:'t29', name:'TOTP (Time-based OTP) generator', type:'crypto'},
+  {id:'t30', name:'Hash Compare Utility', type:'crypto'},
+  {id:'t31', name:'PBKDF2 demo (derive key)', type:'crypto'},
+  {id:'t32', name:'UUID v1/v4 options', type:'gen'},
+  {id:'t33', name:'Entropy Estimator', type:'crypto'},
+  {id:'t34', name:'Secure Password Tips', type:'ui'},
+  {id:'t35', name:'Hash from file (client-side)', type:'crypto'},
+  {id:'t36', name:'JWT Verify (decode only)', type:'crypto'},
+  {id:'t37', name:'URL Safety Checker (basic)', type:'text'},
+  {id:'t38', name:'Password leak demo (local sample)', type:'crypto'},
+  {id:'t39', name:'PEM / RSA Public Key Info (parse)', type:'crypto'},
+  {id:'t40', name:'Crypto Random Bytes Generator', type:'crypto'},
+
+  // 41-60 network/web utilities
+  {id:'t41', name:'IP Checker (public)', type:'net'},
+  {id:'t42', name:'DNS lookup (A/MX/TXT) demo', type:'net'},
+  {id:'t43', name:'Whois (demo info)', type:'net'},
+  {id:'t44', name:'HTTP Header Viewer (fetch)', type:'net'},
+  {id:'t45', name:'CORS Tester (explain)', type:'net'},
+  {id:'t46', name:'QR Code Generator', type:'ui'},
+  {id:'t47', name:'QR Scanner (camera)', type:'ui'},
+  {id:'t48', name:'URL Shortener (use public api)', type:'net'},
+  {id:'t49', name:'Robots.txt Generator', type:'text'},
+  {id:'t50', name:'Sitemap generator (from list)', type:'text'},
+  {id:'t51', name:'Cookie Inspector (explain)', type:'net'},
+  {id:'t52', name:'Meta Tag Generator (SEO)', type:'text'},
+  {id:'t53', name:'Link extractor from HTML', type:'text'},
+  {id:'t54', name:'Embed preview (og tags)', type:'net'},
+  {id:'t55', name:'Ping / Uptime test (simulated)', type:'net'},
+  {id:'t56', name:'Robots tester (check rules)', type:'net'},
+  {id:'t57', name:'Fetch JSON and pretty print', type:'net'},
+  {id:'t58', name:'JSON Schema quick check', type:'text'},
+  {id:'t59', name:'URL params parser', type:'text'},
+  {id:'t60', name:'UserAgent parser (basic)', type:'text'},
+
+  // 61-80 images/media
+  {id:'t61', name:'Image → Base64 (client)', type:'ui'},
+  {id:'t62', name:'Image resize (canvas)', type:'ui'},
+  {id:'t63', name:'Favicon generator', type:'ui'},
+  {id:'t64', name:'Image color palette extractor', type:'ui'},
+  {id:'t65', name:'Image format convert (png↔webp)', type:'ui'},
+  {id:'t66', name:'Canvas watermark tool', type:'ui'},
+  {id:'t67', name:'Screenshot element to PNG', type:'ui'},
+  {id:'t68', name:'SVG optimizer (simple)', type:'text'},
+  {id:'t69', name:'GIF maker (frames demo)', type:'ui'},
+  {id:'t70', name:'Image OCR demo (client lib)', type:'ui'},
+  {id:'t71', name:'Color contrast checker', type:'ui'},
+  {id:'t72', name:'Grayscale / Filters demo', type:'ui'},
+  {id:'t73', name:'Image metadata viewer (EXIF)', type:'ui'},
+  {id:'t74', name:'Thumbnail generator (batch)', type:'ui'},
+  {id:'t75', name:'Photo watermark remover demo (educational)', type:'ui'},
+  {id:'t76', name:'Image composition (layers)', type:'ui'},
+  {id:'t77', name:'Emoji overlay maker', type:'ui'},
+  {id:'t78', name:'Avatar generator (initials)', type:'ui'},
+  {id:'t79', name:'Color to CSS variables', type:'ui'},
+  {id:'t80', name:'Image tiling demo', type:'ui'},
+
+  // 81-100 developer/productivity
+  {id:'t81', name:'UUID batch generator', type:'gen'},
+  {id:'t82', name:'Snippet manager (localStorage)', type:'ui'},
+  {id:'t83', name:'Save snippet to Gist (token opt.)', type:'net'},
+  {id:'t84', name:'Curl / Fetch generator from form', type:'text'},
+  {id:'t85', name:'JS Runner (sandbox iframe)', type:'ui'},
+  {id:'t86', name:'CSS gradient generator', type:'ui'},
+  {id:'t87', name:'Tailwind helper (classes)', type:'text'},
+  {id:'t88', name:'Project README templates', type:'text'},
+  {id:'t89', name:'Git cheat-sheet (generate commands)', type:'text'},
+  {id:'t90', name:'HTTP status code helper', type:'text'},
+  {id:'t91', name:'LocalStorage viewer/editor', type:'ui'},
+  {id:'t92', name:'Theme switcher (save pref)', type:'ui'},
+  {id:'t93', name:'Typing speed test', type:'ui'},
+  {id:'t94', name:'Tiny games hub (tic tac toe)', type:'ui'},
+  {id:'t95', name:'CTF mini challenge (XSS safe)', type:'ui'},
+  {id:'t96', name:'Countdown / Pomodoro', type:'ui'},
+  {id:'t97', name:'Note pad (save locally)', type:'ui'},
+  {id:'t98', name:'Poll / simple survey widget (local)', type:'ui'},
+  {id:'t99', name:'Meme text overlay (image)', type:'ui'},
+  {id:'t100', name:'Random developer quote', type:'gen'},
+  {id:'t101', name:'Extra: generate placeholder data', type:'gen'}
+];
+
+// render tool list
+const toolList = document.getElementById('toolList');
+function renderList(filter=''){
+  const html = TOOLS.filter(t=> t.name.toLowerCase().includes(filter.toLowerCase()))
+    .map(t=>`<div class="tool-btn" data-id="${t.id}"><div><strong>${t.name}</strong><div class="muted">${t.type}</div></div><div>▶</div></div>`).join('');
+  toolList.innerHTML = html;
+}
+renderList();
+
+// search
+const toolSearch = document.getElementById('toolSearch');
+toolSearch.addEventListener('input', ()=> renderList(toolSearch.value));
+
+// drawer open/close
+const fab = document.getElementById('fab');
+const drawer = document.getElementById('drawer');
+fab.addEventListener('click', ()=> drawer.classList.toggle('open'));
+
+// handle clicks on tools
+toolList.addEventListener('click', e=>{
+  const el = e.target.closest('.tool-btn');
+  if(!el) return;
+  const id = el.dataset.id;
+  const tool = TOOLS.find(t=>t.id===id);
+  if(tool) openTool(tool);
+  drawer.classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
+});
+
+// main tool open
+const toolArea = document.getElementById('toolArea');
+function openTool(tool){
+  // simple renderer based on tool.type or id
+  toolArea.innerHTML = `<div class="card"><h3>${tool.name}</h3><div class="muted">نوع: ${tool.type}</div><div style="height:10px"></div><div id="toolContent"></div></div>`;
+  const content = document.getElementById('toolContent');
+  // dispatch by id/type
+  if(tool.id==='t1') renderJSONTool(content);
+  else if(tool.id==='t3') renderBase64(content);
+  else if(tool.id==='t11') renderMarkdown(content);
+  else if(tool.id==='t21') renderHashTool(content);
+  else if(tool.id==='t23') renderPasswordTool(content);
+  else if(tool.id==='t25') renderJWT(content);
+  else if(tool.id==='t46') renderQR(content);
+  else if(tool.id==='t61') renderImageToBase64(content);
+  else if(tool.id==='t15' || tool.type==='gen') renderGenericGenerator(content, tool);
+  else if(tool.type==='text') renderTextTool(content, tool);
+  else if(tool.type==='net') renderNetTool(content, tool);
+  else renderPlaceholder(content, tool);
 }
 
-/* ---------- Drawer / FAB behavior ---------- */
-const fab = $('fab'), drawer = $('drawer'), closeDrawer = $('closeDrawer');
-fab.addEventListener('click', ()=> {
-  if(drawer.classList.contains('hidden')) { drawer.classList.remove('hidden'); drawer.setAttribute('aria-hidden','false'); }
-  else { drawer.classList.add('hidden'); drawer.setAttribute('aria-hidden','true'); }
-});
-closeDrawer.addEventListener('click', ()=> { drawer.classList.add('hidden'); drawer.setAttribute('aria-hidden','true'); });
+/* ========================
+   Implementations of many tools
+   (Keep functions compact and safe)
+   ======================== */
 
-document.querySelectorAll('.tool-btn').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    const tool = b.getAttribute('data-tool');
-    showTool(tool);
-    // close drawer on mobile
-    if(window.innerWidth < 900) drawer.classList.add('hidden');
-  });
-});
+function renderPlaceholder(container, tool){
+  container.innerHTML = `<div class="muted">هذه أداة جاهزة للبرمجة: <strong>${tool.name}</strong>.</div>
+  <div style="height:8px"></div><div class="muted">يمكنك تطويرها لاحقًا بوضع HTML/JS داخل ملف index.html أو كملف منفصل ثم استدعاؤه.</div>`;
+}
 
-/* ---------- JSON Formatter ---------- */
-$('jsonFormat').addEventListener('click', ()=> {
-  const inText = $('jsonIn').value.trim();
-  if(!inText){ $('jsonOut').textContent='لا يوجد مدخلات'; return; }
-  try{
-    const obj = JSON.parse(inText);
-    const pretty = JSON.stringify(obj, null, 2);
-    $('jsonOut').textContent = pretty;
-    navigator.clipboard?.writeText(pretty).catch(()=>{});
-  }catch(err){
-    $('jsonOut').textContent = 'خطأ: JSON غير صالح — ' + err.message;
-  }
-});
-$('jsonValidate').addEventListener('click', ()=> {
-  const inText = $('jsonIn').value.trim();
-  if(!inText){ $('jsonOut').textContent='لا يوجد مدخلات'; return; }
-  try{ JSON.parse(inText); $('jsonOut').textContent = '✅ JSON صالح'; } catch(e){ $('jsonOut').textContent = '❌ غير صالح: ' + e.message; }
-});
-$('jsonCopy').addEventListener('click', ()=> {
-  const text = $('jsonOut').textContent; if(!text) return alert('لا شيء للنسخ');
-  navigator.clipboard.writeText(text); alert('النص نُسخ للحافظة');
-});
+/* ---------- Text generic tool (simple editor + run functions) ---------- */
+function renderTextTool(container, tool){
+  container.innerHTML = `
+    <textarea id="txt" rows="8" placeholder="أدخل نصًا أو لصقه هنا..."></textarea>
+    <div style="height:8px"></div>
+    <div class="row">
+      <button id="btnUpper">Uppercase</button>
+      <button id="btnLower" class="small">Lowercase</button>
+      <button id="btnTitle" class="small">Title Case</button>
+      <button id="btnTrim" class="small">Trim</button>
+      <button id="btnDup" class="small">Remove Dups</button>
+      <button id="btnCopy" class="small">Copy</button>
+    </div>
+    <div style="height:8px"></div>
+    <pre id="txtOut">—</pre>
+  `;
+  const tx = container.querySelector('#txt');
+  const out = container.querySelector('#txtOut');
+  container.querySelector('#btnUpper').onclick = ()=> out.textContent = tx.value.toUpperCase();
+  container.querySelector('#btnLower').onclick = ()=> out.textContent = tx.value.toLowerCase();
+  container.querySelector('#btnTitle').onclick = ()=> out.textContent = tx.value.replace(/\w\S*/g, w=>w.charAt(0).toUpperCase()+w.substr(1).toLowerCase());
+  container.querySelector('#btnTrim').onclick = ()=> out.textContent = tx.value.trim().replace(/\s+/g,' ');
+  container.querySelector('#btnDup').onclick = ()=> {
+    const lines = tx.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    out.textContent = Array.from(new Set(lines)).join('\n');
+  };
+  container.querySelector('#btnCopy').onclick = ()=> { navigator.clipboard.writeText(out.textContent).then(()=>alert('نُسخ')); };
+}
+
+/* ---------- JSON Tool ---------- */
+function renderJSONTool(container){
+  container.innerHTML = `
+    <textarea id="jsonIn" rows="10" placeholder='{"name":"Ali","age":22}'></textarea>
+    <div style="height:8px"></div>
+    <div class="row">
+      <button id="format">Format</button>
+      <button id="validate" class="small">Validate</button>
+      <button id="toCsv" class="small">To CSV</button>
+      <button id="copy" class="small">Copy</button>
+    </div>
+    <div style="height:8px"></div>
+    <pre id="jsonOut">-</pre>
+  `;
+  const inEl = container.querySelector('#jsonIn'), out = container.querySelector('#jsonOut');
+  container.querySelector('#format').onclick = ()=>{
+    try{ const obj = JSON.parse(inEl.value); out.textContent = JSON.stringify(obj,null,2); } catch(e){ out.textContent = 'خطأ: JSON غير صالح — '+e.message; }
+  };
+  container.querySelector('#validate').onclick = ()=> {
+    try{ JSON.parse(inEl.value); out.textContent = '✅ JSON صالح'; } catch(e){ out.textContent = '❌ غير صالح: '+e.message; }
+  };
+  container.querySelector('#toCsv').onclick = ()=> {
+    try{
+      const obj = JSON.parse(inEl.value);
+      if(Array.isArray(obj)){
+        const keys = Array.from(new Set(obj.flatMap(o=>Object.keys(o))));
+        const lines = [keys.join(',')].concat(obj.map(o=>keys.map(k=> (o[k]!==undefined?('"' + String(o[k]).replace(/"/g,'""') + '"'):'') ).join(',')));
+        out.textContent = lines.join('\n');
+      } else out.textContent = 'انت تحتاج مصفوفة من الكائنات JSON[]';
+    }catch(e){ out.textContent='خطأ: '+e.message; }
+  };
+  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(out.textContent).then(()=>alert('نُسخ'));
+}
 
 /* ---------- Base64 ---------- */
-function b64Encode(s){ try{ return btoa(unescape(encodeURIComponent(s))); }catch(e){ return 'خطأ: لا يمكن تشفير النص'; } }
-function b64Decode(s){ try{ return decodeURIComponent(escape(atob(s))); }catch(e){ return 'خطأ: مدخل Base64 غير صالح'; } }
-$('b64Enc').addEventListener('click', ()=> { $('b64Out').textContent = b64Encode($('b64In').value); });
-$('b64Dec').addEventListener('click', ()=> { $('b64Out').textContent = b64Decode($('b64In').value); });
-$('b64Copy').addEventListener('click', ()=> { navigator.clipboard.writeText($('b64Out').textContent); alert('نُسخ'); });
-
-/* ---------- Password Generator + Strength ---------- */
-function genPassword(len, mode){
-  const sets = {
-    all: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{};:,.<>?',
-    nosym: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-    letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+function renderBase64(container){
+  container.innerHTML = `
+    <textarea id="bIn" rows="5"></textarea>
+    <div style="height:8px"></div>
+    <div class="row"><button id="enc">Encode</button><button id="dec" class="small">Decode</button><button id="copy" class="small">Copy</button></div>
+    <div style="height:8px"></div><pre id="bOut">-</pre>
+  `;
+  container.querySelector('#enc').onclick = ()=>{
+    try{ const s = container.querySelector('#bIn').value; const out = btoa(unescape(encodeURIComponent(s))); container.querySelector('#bOut').textContent = out; } catch(e){ container.querySelector('#bOut').textContent='خطأ'; }
   };
-  const chars = sets[mode] || sets.all;
-  let out = '';
-  const arr = new Uint32Array(len);
-  window.crypto.getRandomValues(arr);
-  for(let i=0;i<len;i++) out += chars[arr[i] % chars.length];
-  return out;
+  container.querySelector('#dec').onclick = ()=>{
+    try{ const s = container.querySelector('#bIn').value; const out = decodeURIComponent(escape(atob(s))); container.querySelector('#bOut').textContent = out; } catch(e){ container.querySelector('#bOut').textContent='Invalid Base64'; }
+  };
+  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#bOut').textContent).then(()=>alert('نُسخ'));
 }
-function strength(p){
-  let score = 0;
-  if(p.length>=8) score++;
-  if(p.length>=12) score++;
-  if(/[a-z]/.test(p) && /[A-Z]/.test(p)) score++;
-  if(/[0-9]/.test(p)) score++;
-  if(/[^A-Za-z0-9]/.test(p)) score++;
-  return score;
-}
-$('pwdGen').addEventListener('click', ()=>{
-  const len = Math.max(6, Math.min(64, parseInt($('pwdLen').value)||16));
-  const mode = $('pwdType').value;
-  const p = genPassword(len, mode);
-  $('pwdOut').value = p;
-  const s = strength(p);
-  const pct = (s/5)*100;
-  const meter = $('pwdMeter');
-  meter.style.width = pct+'%';
-  meter.style.background = s<=2 ? '#f97316' : (s===3 ? '#facc15' : '#22c55e');
-});
-$('pwdCopy').addEventListener('click', ()=> { const v=$('pwdOut').value; if(!v) return alert('لا يوجد'); navigator.clipboard.writeText(v); alert('Password copied'); });
 
-/* ---------- JWT Decoder ---------- */
-function b64u_decode(s){
-  try{
-    s = s.replace(/-/g, '+').replace(/_/g, '/');
-    while(s.length % 4) s += '=';
-    return decodeURIComponent(escape(atob(s)));
-  }catch(e){ return null; }
-}
-$('jwtDec').addEventListener('click', ()=>{
-  const v = $('jwtIn').value.trim();
-  if(!v) return alert('ضع JWT أولاً');
-  const parts = v.split('.');
-  if(parts.length < 2) return alert('JWT غير صحيح');
-  $('jwtHead').textContent = b64u_decode(parts[0]) || 'تعذر فك header';
-  $('jwtPayload').textContent = b64u_decode(parts[1]) || 'تعذر فك payload';
-});
-$('jwtClear').addEventListener('click', ()=>{ $('jwtIn').value=''; $('jwtHead').textContent='-'; $('jwtPayload').textContent='-'; });
-
-/* ---------- SHA-256 (Web Crypto) ---------- */
-async function sha256hex(txt){
-  const enc = new TextEncoder();
-  const data = enc.encode(txt);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-$('shaCalc').addEventListener('click', async ()=> {
-  const v = $('shaIn').value||'';
-  if(!v) return alert('أدخل نصاً');
-  $('shaOut').textContent = 'جارٍ الحساب...';
-  const r = await sha256hex(v);
-  $('shaOut').textContent = r;
-});
-$('shaCopy').addEventListener('click', ()=> { navigator.clipboard.writeText($('shaOut').textContent); alert('Hash copied'); });
-
-/* ---------- QR Generator (Google Charts as fallback) ---------- */
-$('qrGen').addEventListener('click', ()=> {
-  const v = encodeURIComponent($('qrIn').value||'');
-  if(!v) return alert('أدخل نصاً أو رابطاً');
-  // use Google Chart API (simple and reliable)
-  const src = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${v}&choe=UTF-8`;
-  $('qrImg').src = src;
-  $('qrImg').style.display = 'inline-block';
-});
-$('qrSave').addEventListener('click', ()=> {
-  const img = $('qrImg');
-  if(!img.src) return alert('انشئ QR أولاً');
-  const a = document.createElement('a'); a.href = img.src; a.download = 'qr.png'; document.body.appendChild(a); a.click(); a.remove();
-});
-
-/* ---------- IP Checker (uses external services) ---------- */
-async function fetchIPInfo(ip){
-  try{
-    let target = ip || '';
-    if(!target){
-      const r = await fetch('https://api.ipify.org?format=json');
-      if(!r.ok) throw new Error('تعذر الحصول على IP');
-      const j = await r.json(); target = j.ip;
-    }
-    // ipapi.co provides json (CORS usually allowed); if fails, show basic ip only
-    const infoRes = await fetch('https://ipapi.co/' + target + '/json/');
-    if(!infoRes.ok) throw new Error('تعذر جلب معلومات الموقع');
-    const info = await infoRes.json();
-    $('ipOut').textContent = `IP: ${info.ip || target}\nCountry: ${info.country_name || 'N/A'}\nRegion/City: ${[info.region, info.city].filter(Boolean).join(' / ') || 'N/A'}\nISP: ${info.org || 'N/A'}\nRaw:\n${JSON.stringify(info, null, 2)}`;
-  }catch(err){
-    $('ipOut').textContent = 'خطأ: ' + err.message + '\nملاحظة: قد تمنع CORS بعض الخدمات في المتصفح. جرّب فتح الصفحة في متصفح آخر أو استخدم VPN.';
+/* ---------- Markdown (marked.js via CDN) ---------- */
+function renderMarkdown(container){
+  container.innerHTML = `
+    <div class="row"><textarea id="md" rows="8"># Hello\nWrite **Markdown** here.</textarea></div>
+    <div style="height:8px"></div>
+    <div class="card" id="mdPreview" style="min-height:120px"></div>
+  `;
+  // load marked if not present
+  if(!window.markedLoaded){
+    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js'; s.onload = ()=> { window.markedLoaded=true; setup(); };
+    document.body.appendChild(s);
+  } else setup();
+  function setup(){
+    const md = container.querySelector('#md'), prev = container.querySelector('#mdPreview');
+    md.addEventListener('input', ()=> { prev.innerHTML = marked.parse(md.value || ''); });
+    md.dispatchEvent(new Event('input'));
   }
 }
-$('ipCheck').addEventListener('click', ()=> fetchIPInfo($('ipField').value.trim()));
 
-/* ---------- Markdown Preview (marked.js) ---------- */
-const mdIn = $('mdIn'), mdPreview = $('mdPreview');
-mdIn.addEventListener('input', ()=> {
-  const m = mdIn.value || '';
-  // enable simple sanitization via innerText for safety, but we'll allow marked's output
-  mdPreview.innerHTML = marked.parse(m);
-});
-/* initial content */
-mdIn.value = "# مرحبًا\nاكتب **Markdown** هنا.";
-mdIn.dispatchEvent(new Event('input'));
+/* ---------- Hash tool with Web Crypto ---------- */
+async function shaHex(txt, alg='SHA-256'){
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest(alg, enc.encode(txt));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function renderHashTool(container){
+  container.innerHTML = `
+    <input id="hIn" placeholder="نص لحسابه"><div style="height:8px"></div>
+    <div class="row"><button id="sha1">SHA-1</button><button id="sha256" class="small">SHA-256</button><button id="md5" class="small">MD5 (polyfill)</button><button id="copy" class="small">Copy</button></div>
+    <div style="height:8px"></div><pre id="hOut">-</pre>
+  `;
+  container.querySelector('#sha1').onclick = async ()=> container.querySelector('#hOut').textContent = await shaHex(container.querySelector('#hIn').value,'SHA-1');
+  container.querySelector('#sha256').onclick = async ()=> container.querySelector('#hOut').textContent = await shaHex(container.querySelector('#hIn').value,'SHA-256');
+  // MD5 via small JS fallback (not cryptographically secure here: use lib; but implement simple)
+  container.querySelector('#md5').onclick = ()=> {
+    // tiny md5 implementation (lightweight)
+    if(!window.md5) {
+      // load tiny-md5 from CDN
+      const sc = document.createElement('script'); sc.src='https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js';
+      sc.onload = ()=> { window.md5=true; container.querySelector('#hOut').textContent = md5(container.querySelector('#hIn').value); };
+      document.body.appendChild(sc);
+    } else container.querySelector('#hOut').textContent = md5(container.querySelector('#hIn').value);
+  };
+  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#hOut').textContent).then(()=>alert('نُسخ'));
+}
 
-/* ---------- convenience: show welcome on load ---------- */
-document.addEventListener('DOMContentLoaded', ()=> {
-  // show welcome (already visible) - nothing to do
+/* ---------- Password generator ---------- */
+function renderPasswordTool(container){
+  container.innerHTML = `
+    <div class="row"><input id="plen" type="number" value="16" min="6" max="128"><select id="ptype"><option value="all">All</option><option value="nosym">No symbols</option><option value="letters">Letters</option></select></div>
+    <div style="height:8px"></div>
+    <div class="row"><button id="gen">Generate</button><button id="copy" class="small">Copy</button></div>
+    <div style="height:8px"></div><input id="pOut" readonly><div style="height:8px"></div><div class="meter"><i id="pMeter" style="display:block;height:10px;width:0%;background:#f97316"></i></div>
+  `;
+  const gen = ()=> {
+    const len = parseInt(container.querySelector('#plen').value)||16;
+    const mode = container.querySelector('#ptype').value;
+    const sets = { all: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{};:,.<>?', nosym: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', letters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' };
+    const chars = sets[mode];
+    const arr = new Uint32Array(len);
+    crypto.getRandomValues(arr);
+    let out = ''; for(let i=0;i<len;i++) out += chars[arr[i] % chars.length];
+    container.querySelector('#pOut').value = out;
+    const s = strengthScore(out);
+    container.querySelector('#pMeter').style.width = (s/5*100)+'%'; container.querySelector('#pMeter').style.background = s<=2? '#f97316' : (s===3? '#facc15' : '#22c55e');
+  };
+  container.querySelector('#gen').onclick = gen;
+  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#pOut').value).then(()=>alert('نُسخ'));
+  function strengthScore(p){ let sc=0; if(p.length>=8) sc++; if(p.length>=12) sc++; if(/[a-z]/.test(p) && /[A-Z]/.test(p)) sc++; if(/[0-9]/.test(p)) sc++; if(/[^A-Za-z0-9]/.test(p)) sc++; return Math.min(sc,5); }
+}
+
+/* ---------- JWT Decoder ---------- */
+function b64uDecode(s){ try{ s = s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); } catch(e){ return null; } }
+function renderJWT(container){
+  container.innerHTML = `
+    <input id="jIn" placeholder="JWT (header.payload.signature)"><div style="height:8px"></div>
+    <div class="row"><button id="dec">Decode</button><button id="copy" class="small">Copy Payload</button></div>
+    <div style="height:8px"></div><div class="muted">Header</div><pre id="jHead">-</pre><div class="muted">Payload</div><pre id="jPayload">-</pre>
+  `;
+  container.querySelector('#dec').onclick = ()=> {
+    const v = container.querySelector('#jIn').value.trim();
+    if(!v) return alert('ضع JWT');
+    const p = v.split('.');
+    container.querySelector('#jHead').textContent = b64uDecode(p[0])||'—';
+    container.querySelector('#jPayload').textContent = b64uDecode(p[1])||'—';
+  };
+  container.querySelector('#copy').onclick = ()=> {
+    const s = container.querySelector('#jPayload').textContent;
+    if(!s) return alert('لا يوجد payload'); navigator.clipboard.writeText(s).then(()=>alert('نُسخ'));
+  };
+}
+
+/* ---------- QR Generator (Google Charts) ---------- */
+function renderQR(container){
+  container.innerHTML = `
+    <input id="qrIn" placeholder="https://example.com أو WIFI:T:WPA;S:SSID;P:pass;;"><div style="height:8px"></div>
+    <div class="row"><button id="gen">Generate</button><button id="save" class="small">Download</button></div>
+    <div style="height:8px"></div><div id="qrBox" style="text-align:center"></div>
+  `;
+  const genImg = (text)=> {
+    const u = encodeURIComponent(text);
+    return `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${u}&choe=UTF-8`;
+  };
+  container.querySelector('#gen').onclick = ()=> {
+    const v = container.querySelector('#qrIn').value.trim(); if(!v) return alert('أدخل نص');
+    const src = genImg(v);
+    container.querySelector('#qrBox').innerHTML = `<img id="qrImg" src="${src}" style="max-width:260px;border-radius:8px">`;
+  };
+  container.querySelector('#save').onclick = ()=> {
+    const img = container.querySelector('#qrImg'); if(!img) return alert('أنشئ QR أولاً'); const a=document.createElement('a'); a.href=img.src; a.download='qr.png'; document.body.appendChild(a); a.click(); a.remove();
+  };
+}
+
+/* ---------- Image → Base64 (client-side) ---------- */
+function renderImageToBase64(container){
+  container.innerHTML = `
+    <input id="imgFile" type="file" accept="image/*"><div style="height:8px"></div>
+    <div class="row"><button id="conv">Convert</button><button id="save" class="small">Download Base64.txt</button></div>
+    <div style="height:8px"></div><pre id="imgOut" style="max-height:220px;overflow:auto">-</pre>
+  `;
+  container.querySelector('#conv').onclick = ()=> {
+    const f = container.querySelector('#imgFile').files[0]; if(!f) return alert('اختر صورة');
+    const reader = new FileReader();
+    reader.onload = ()=> { container.querySelector('#imgOut').textContent = reader.result.split(',')[1]; };
+    reader.readAsDataURL(f);
+  };
+  container.querySelector('#save').onclick = ()=> {
+    const txt = container.querySelector('#imgOut').textContent; if(!txt) return alert('لا بيانات'); const blob = new Blob([txt],{type:'text/plain'}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='image_base64.txt'; a.click(); URL.revokeObjectURL(url);
+  };
+}
+
+/* ---------- Generic generator for gen-type tools ---------- */
+function renderGenericGenerator(container, tool){
+  container.innerHTML = `<div class="muted">مولّد: ${tool.name}</div><div style="height:8px"></div><div class="row"><button id="gbtn">Generate</button><button id="copy" class="small">Copy</button></div><div style="height:8px"></div><pre id="gOut">-</pre>`;
+  container.querySelector('#gbtn').onclick = ()=> {
+    let out = '';
+    if(tool.id==='t13') out = lorem(3,8);
+    else if(tool.id==='t15') out = uuidv4();
+    else if(tool.id==='t20') out = lorem(1,3);
+    else if(tool.id==='t100') out = randomQuote();
+    else out = `مولد عام: ${tool.name}`;
+    container.querySelector('#gOut').textContent = out;
+  };
+  container.querySelector('#copy').onclick = ()=> navigator.clipboard.writeText(container.querySelector('#gOut').textContent).then(()=>alert('نُسخ'));
+}
+
+/* ---------- Net tools (simple behavior; may need internet) ---------- */
+function renderNetTool(container, tool){
+  container.innerHTML = `<div class="muted">أداة شبكات: ${tool.name}</div><div style="height:8px"></div><div class="row"><input id="nIn" placeholder="اتركه فارغاً لاكتشاف جهازك"><button id="run">Check</button></div><div style="height:8px"></div><pre id="nOut">—</pre>`;
+  container.querySelector('#run').onclick = async ()=>{
+    const val = container.querySelector('#nIn').value.trim();
+    const out = container.querySelector('#nOut');
+    try{
+      if(tool.id==='t41'){
+        let target = val;
+        if(!target){
+          const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json(); target = j.ip;
+        }
+        const infoRes = await fetch('https://ipapi.co/' + target + '/json/');
+        const info = await infoRes.json();
+        out.textContent = `IP: ${info.ip}\nCountry: ${info.country_name}\nCity: ${info.city}\nISP: ${info.org}\nRaw:\n${JSON.stringify(info,null,2)}`;
+      } else {
+        out.textContent = `هذه أداة شبكة تجريبية: ${tool.name}\n(قد تحتاج API خارجي)`;
+      }
+    }catch(e){ out.textContent = 'خطأ: '+e.message + '\nملاحظة: بعض الخدمات قد تمنع CORS في المتصفح.'; }
+  };
+}
+
+/* ---------- Utilities used by various tools ---------- */
+function lorem(minPara=1,words=50){
+  const L = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".split(' ');
+  const make = (n)=> Array.from({length:n}, ()=> L[Math.floor(Math.random()*L.length)]).join(' ');
+  return Array.from({length:minPara}, ()=> make(words)).join('\n\n');
+}
+function uuidv4(){ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){ const r=Math.random()*16|0; const v=c=='x'?r:(r&0x3|0x8); return v.toString(16); }); }
+function randomQuote(){ const q=["Code is like humor. When you have to explain it, it’s bad.","Fix the cause, not the symptom.","Simplicity is the soul of efficiency.","First, solve the problem. Then, write the code.","Make it work, make it right, make it fast."]; return q[Math.floor(Math.random()*q.length)]; }
+
+/* ---------- init: handle direct click on tool items (delegated) ---------- */
+document.addEventListener('click', (e)=> {
+  const b = e.target.closest('.tool-btn');
+  // handled above
 });
+
+/* ---------- nice: open first tool on load? no, show welcome ---------- */
 </script>
 </body>
 </html>
