@@ -3,119 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎮 نظام شحن ببجي</title>
+<title>نظام شحن ببجي التجريبي</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Tajawal', sans-serif;
-  background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
-  color: white;
-  text-align: center;
-  overflow-x: hidden;
+  font-family:'Tajawal',sans-serif;
+  background:radial-gradient(circle at top,#0f2027,#203a43,#2c5364);
+  color:white;
+  text-align:center;
+  padding-top:80px;
 }
-
-/* الصفحة الأولى */
-.section {
-  display: none;
-  animation: fade 0.5s ease;
+input,select{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin:8px;
+  width:200px;
 }
-.section.active {
-  display: block;
+button{
+  background:linear-gradient(90deg,gold,orange);
+  color:black;
+  border:none;
+  padding:10px 30px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
 }
-@keyframes fade {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-/* واجهة الشحن */
-#home {
-  padding-top: 100px;
-}
-#home h1 {
-  font-size: 2em;
-  color: gold;
-}
-#home button {
-  background: linear-gradient(90deg, gold, orange);
-  border: none;
-  padding: 15px 40px;
-  border-radius: 10px;
-  font-size: 18px;
-  cursor: pointer;
-  color: black;
-  transition: 0.3s;
-}
-#home button:hover {
-  transform: scale(1.05);
-}
-
-/* واجهة تشبه Google */
-#google {
-  background: white;
-  color: black;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-#google h2 {
-  color: #4285F4;
-  font-size: 40px;
-  margin-bottom: 20px;
-}
-#google input {
-  width: 80%;
-  max-width: 400px;
-  padding: 12px 20px;
-  font-size: 16px;
-  border-radius: 30px;
-  border: 1px solid #ccc;
-  outline: none;
-  text-align: center;
-}
-#google input:focus {
-  box-shadow: 0 0 10px #4285F4;
-}
-#google .back {
-  margin-top: 30px;
-  color: #4285F4;
-  cursor: pointer;
-  font-weight: bold;
-}
-#google .back:hover {
-  text-decoration: underline;
+.result{
+  margin-top:20px;
+  background:rgba(0,0,0,0.3);
+  display:inline-block;
+  padding:15px;
+  border-radius:10px;
+  display:none;
 }
 </style>
 </head>
 <body>
 
-<!-- الصفحة 1 -->
-<section id="home" class="section active">
-  <h1>⚡ نظام شحن شدات ببجي</h1>
-  <p>اضغط على الزر للمتابعة</p>
-  <button id="startBtn">اشحن الآن 💎</button>
-</section>
+<h1>⚡ شحن شدات ببجي (تجريبي)</h1>
+<form id="form">
+  <input type="text" id="playerid" placeholder="ID اللاعب" required><br>
+  <input type="number" id="uc" placeholder="عدد الشدات" required><br>
+  <select id="server" required>
+    <option value="">اختر السيرفر</option>
+    <option>ASIA</option>
+    <option>EUROPE</option>
+    <option>KSA</option>
+    <option>NORTH AMERICA</option>
+  </select><br>
+  <button type="submit">اشحن الآن 💎</button>
+</form>
 
-<!-- الصفحة 2 -->
-<section id="google" class="section">
-  <h2>Google</h2>
-  <input type="text" placeholder="ابحث هنا...">
-  <div class="back" id="backBtn">⬅ العودة</div>
-</section>
+<div class="result" id="result"></div>
 
 <script>
-const home = document.getElementById("home");
-const google = document.getElementById("google");
-document.getElementById("startBtn").addEventListener("click", () => {
-  home.classList.remove("active");
-  google.classList.add("active");
-});
-document.getElementById("backBtn").addEventListener("click", () => {
-  google.classList.remove("active");
-  home.classList.add("active");
+document.getElementById("form").addEventListener("submit",function(e){
+  e.preventDefault();
+  const id=document.getElementById("playerid").value;
+  const uc=document.getElementById("uc").value;
+  const server=document.getElementById("server").value;
+  const res=document.getElementById("result");
+  res.style.display="block";
+  res.innerHTML=`
+    <h3>تم استلام البيانات ✅</h3>
+    <p>🎮 ID: ${id}</p>
+    <p>💰 عدد الشدات: ${uc}</p>
+    <p>🌍 السيرفر: ${server}</p>
+    <p>هذه محاكاة فقط للتجربة.</p>`;
 });
 </script>
 
