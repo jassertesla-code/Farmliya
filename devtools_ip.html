@@ -1,0 +1,122 @@
+<!doctype html>
+
+<html lang="ar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DevTools — فحص IP وأدوات سريعة</title>
+  <style>
+    :root{--bg:#0f1720;--card:#0b1220;--accent:#00d1a1;--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#071426 0%,#07192e 100%);color:#e6eef6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:980px}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    header h1{margin:0;font-size:20px;color:var(--accent)}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:860px){.grid{grid-template-columns:360px 1fr}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:16px;box-shadow:0 6px 30px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:var(--muted);font-size:13px}
+    button{background:var(--accent);border:0;color:#042025;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .row{display:flex;gap:8px;align-items:center}
+    .field{width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);color:inherit}
+    pre{background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;white-space:pre-wrap}
+    .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>DevTools — أدوات سريعة</h1>
+      <div class="muted">(إصدار مبسّط: أضف المزيد لاحقًا)</div>
+    </header><div class="grid">
+  <!-- العمود الأيمن: أداة فحص IP -->
+  <div class="card">
+    <div class="label">🔎 أداة فحص IP</div>
+    <div class="muted">تعرّف على IP العام لمتصفحك ومعلومات الموقع التقريبيّة.</div>
+    <div style="height:12px"></div>
+    <div class="row">
+      <input id="ipInput" class="field" placeholder="اتركه فارغًا لفحص IP الخاص بك" />
+      <button id="checkBtn">فحص</button>
+    </div>
+    <div style="height:12px"></div>
+    <div id="result" style="display:none">
+      <div class="label">IP:</div>
+      <pre id="ipOut">–</pre>
+      <div class="label">البلد / المنطقة:</div>
+      <pre id="locOut">–</pre>
+      <div class="label">المزوّد (ISP):</div>
+      <pre id="ispOut">–</pre>
+      <div class="label">المزيد:</div>
+      <pre id="rawOut">–</pre>
+    </div>
+  </div>
+
+  <!-- العمود الأيسر: مساحة لمزيد الأدوات -->
+  <div class="card">
+    <div class="label">✳️ أدوات إضافية</div>
+    <div class="muted">قريبًا: مولّد رموز، JSON Formatter، تحويل إلى Base64...</div>
+    <div style="height:12px"></div>
+    <div class="label">مثال: استخراج IP تلقائيًا</div>
+    <button id="autoBtn" class="btn-ghost">اكتشاف IP الآن</button>
+    <div style="height:14px"></div>
+    <div class="label">تعليمات سريعة</div>
+    <ol style="color:var(--muted);padding-left:18px">
+      <li>اكتب IP محدد إن أردت فحصه، أو اترك الحقل فارغًا لتفحص IP جهازك.</li>
+      <li>انقر "فحص" وستظهر المعلومات أدناه إن توفرت.</li>
+    </ol>
+  </div>
+</div>
+
+  </div><script>
+  const ipInput = document.getElementById('ipInput');
+  const checkBtn = document.getElementById('checkBtn');
+  const result = document.getElementById('result');
+  const ipOut = document.getElementById('ipOut');
+  const locOut = document.getElementById('locOut');
+  const ispOut = document.getElementById('ispOut');
+  const rawOut = document.getElementById('rawOut');
+  const autoBtn = document.getElementById('autoBtn');
+
+  // دالة مساعدة لتنسيق وإظهار الأخطاء
+  function showError(msg){
+    result.style.display = 'block';
+    ipOut.textContent = 'خطأ';
+    locOut.textContent = msg;
+    ispOut.textContent = '-';
+    rawOut.textContent = '';
+  }
+
+  async function fetchIPInfo(ip){
+    try{
+      // إذا لم يُعطى IP، نستخدم ipify للحصول على الـ public IP
+      if(!ip){
+        const r = await fetch('https://api.ipify.org?format=json');
+        if(!r.ok) throw new Error('تعذر جلب IP');
+        const j = await r.json();
+        ip = j.ip;
+      }
+
+      // نستخدم خدمة ipapi.co للحصول على معلومات جغرافية (خيار جيد بدون مفتاح)
+      const infoRes = await fetch('https://ipapi.co/' + ip + '/json/');
+      if(!infoRes.ok) throw new Error('تعذر جلب معلومات عن هذا الـ IP');
+      const info = await infoRes.json();
+
+      result.style.display = 'block';
+      ipOut.textContent = info.ip || ip;
+      const loc = [info.country_name, info.region, info.city].filter(Boolean).join(' / ');
+      locOut.textContent = loc || 'غير متوفر';
+      ispOut.textContent = info.org || 'غير متوفر';
+      rawOut.textContent = JSON.stringify(info, null, 2);
+    }catch(err){
+      showError(err.message);
+    }
+  }
+
+  checkBtn.addEventListener('click', ()=> fetchIPInfo(ipInput.value.trim()));
+  autoBtn.addEventListener('click', ()=> fetchIPInfo(''));
+
+  // فحص تلقائي عند تحميل الصفحة
+  window.addEventListener('load', ()=> fetchIPInfo(''));
+</script></body>
+</html>
