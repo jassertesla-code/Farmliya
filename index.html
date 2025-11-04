@@ -1,78 +1,78 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام شحن ببجي التجريبي</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<title>منشئ التطبيقات - Farmliya</title>
 <style>
-body {
-  font-family:'Tajawal',sans-serif;
-  background:radial-gradient(circle at top,#0f2027,#203a43,#2c5364);
-  color:white;
-  text-align:center;
-  padding-top:80px;
-}
-input,select{
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  margin:8px;
-  width:200px;
-}
-button{
-  background:linear-gradient(90deg,gold,orange);
-  color:black;
-  border:none;
-  padding:10px 30px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:16px;
-}
-.result{
-  margin-top:20px;
-  background:rgba(0,0,0,0.3);
-  display:inline-block;
-  padding:15px;
-  border-radius:10px;
-  display:none;
-}
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    color: #fff;
+    text-align: center;
+    padding: 50px;
+  }
+  .container {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    margin: auto;
+  }
+  input, textarea {
+    width: 90%;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+  }
+  button {
+    background: gold;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 25px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: orange;
+  }
 </style>
 </head>
 <body>
+  <div class="container">
+    <h1>🚀 صمم تطبيقك الخاص</h1>
+    <form id="appForm">
+      <input type="text" id="appName" placeholder="اسم التطبيق" required><br>
+      <textarea id="appDesc" placeholder="وصف التطبيق"></textarea><br>
+      <input type="color" id="appColor" value="#00aaff"><br>
+      <input type="file" id="appIcon" accept="image/*"><br>
+      <button type="submit">إنشاء التطبيق 📱</button>
+    </form>
+    <p id="status"></p>
+  </div>
 
-<h1>⚡ شحن شدات ببجي (تجريبي)</h1>
-<form id="form">
-  <input type="text" id="playerid" placeholder="ID اللاعب" required><br>
-  <input type="number" id="uc" placeholder="عدد الشدات" required><br>
-  <select id="server" required>
-    <option value="">اختر السيرفر</option>
-    <option>ASIA</option>
-    <option>EUROPE</option>
-    <option>KSA</option>
-    <option>NORTH AMERICA</option>
-  </select><br>
-  <button type="submit">اشحن الآن 💎</button>
-</form>
-
-<div class="result" id="result"></div>
-
-<script>
-document.getElementById("form").addEventListener("submit",function(e){
-  e.preventDefault();
-  const id=document.getElementById("playerid").value;
-  const uc=document.getElementById("uc").value;
-  const server=document.getElementById("server").value;
-  const res=document.getElementById("result");
-  res.style.display="block";
-  res.innerHTML=`
-    <h3>تم استلام البيانات ✅</h3>
-    <p>🎮 ID: ${id}</p>
-    <p>💰 عدد الشدات: ${uc}</p>
-    <p>🌍 السيرفر: ${server}</p>
-    <p>هذه محاكاة فقط للتجربة.</p>`;
-});
-</script>
-
+  <script>
+    document.getElementById('appForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('status').textContent = "⏳ جاري إنشاء التطبيق...";
+      
+      // إرسال البيانات إلى الخادم (سيضاف لاحقًا)
+      const res = await fetch("https://your-backend.onrender.com/build", {
+        method: "POST",
+        body: new FormData(e.target)
+      });
+      
+      if(res.ok) {
+        const data = await res.json();
+        document.getElementById('status').innerHTML = `✅ تم الإنشاء! <a href="${data.download}" style="color:gold;">تحميل APK</a>`;
+      } else {
+        document.getElementById('status').textContent = "❌ حدث خطأ أثناء الإنشاء";
+      }
+    });
+  </script>
 </body>
 </html>
