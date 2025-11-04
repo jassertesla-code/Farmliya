@@ -137,24 +137,11 @@
 
   .splash-small { margin-top:8px; color:var(--muted); font-size:13px; }
 
-  .splash-skip {
-    margin-top:14px;
-    border: 0;
-    background: transparent;
-    color: #ffd985;
-    font-weight:700;
-    cursor:pointer;
-    padding:8px 12px;
-    border-radius:10px;
-    transition: transform .12s;
-  }
-  .splash-skip:hover { transform: translateY(-2px); }
-
 </style>
 </head>
 <body>
 
-  <!-- ===== Splash / Intro Overlay ===== -->
+  <!-- ===== Splash / Intro Overlay (no skip button) ===== -->
   <div id="splashOverlay" aria-hidden="true">
     <div class="splash-center">
       <div class="splash-logo">UC</div>
@@ -166,7 +153,6 @@
       </div>
 
       <div class="splash-small">سيبدأ الموقع بعد <span id="splashSeconds">5</span> ثوانٍ</div>
-      <button id="skipSplash" class="splash-skip">تخطي</button>
     </div>
   </div>
   <!-- ===== end Splash ===== -->
@@ -460,13 +446,12 @@ clearBtn.addEventListener('click', ()=>{ form.reset(); showPreview(); statusEl.t
 showPreview();
 </script>
 
-<!-- Splash control script -->
+<!-- Splash control script (no skip) -->
 <script>
 (function(){
   const overlay = document.getElementById('splashOverlay');
   const prog = document.getElementById('splashProgress');
   const secSpan = document.getElementById('splashSeconds');
-  const skipBtn = document.getElementById('skipSplash');
 
   // مدة العرض بالثواني
   const DURATION = 5;
@@ -491,8 +476,6 @@ showPreview();
     overlay.classList.add('hidden');
     setTimeout(()=> { try{ overlay.remove(); }catch(e){} }, 600);
   }
-
-  skipBtn.addEventListener('click', finishSplash);
 
   window.addEventListener('load', () => {
     // بداية متأخرة قليلًا كي يتحضر الخلفيّة
