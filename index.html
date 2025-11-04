@@ -1,76 +1,105 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منشئ التطبيقات - Farmliya</title>
-<style>
-  body {
-    font-family: 'Cairo', sans-serif;
-    background: linear-gradient(135deg, #0d1b2a, #1b263b);
-    color: #fff;
-    text-align: center;
-    padding: 50px;
-  }
-  .container {
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 30px;
-    width: 90%;
-    max-width: 450px;
-    margin: auto;
-  }
-  input, textarea {
-    width: 90%;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-  }
-  button {
-    background: gold;
-    color: black;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 25px;
-    cursor: pointer;
-  }
-  button:hover {
-    background: orange;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منشئ التطبيقات — Farmliya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #0d1b2a, #1b263b);
+      color: #fff;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .container {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    input, textarea, select {
+      width: 90%;
+      margin: 10px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+    button {
+      background: gold;
+      color: black;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: orange;
+      transform: scale(1.03);
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>🚀 صمم تطبيقك الخاص</h1>
+    <h1>🚀 منشئ تطبيقات</h1>
+    <p>اصنع تطبيقك مع Farmliya — أدخل البيانات أدناه</p>
+
     <form id="appForm">
-      <input type="text" id="appName" placeholder="اسم التطبيق" required><br>
-      <textarea id="appDesc" placeholder="وصف التطبيق"></textarea><br>
-      <input type="color" id="appColor" value="#00aaff"><br>
-      <input type="file" id="appIcon" accept="image/*"><br>
+      <input type="text" name="appName" id="appName" placeholder="اسم التطبيق" required>
+      <textarea name="appDesc" id="appDesc" placeholder="وصف التطبيق (اختياري)" rows="3"></textarea>
+      <label>لون واجهة التطبيق:</label><br>
+      <input type="color" name="appColor" id="appColor" value="#00aaff"><br>
+      <label>أيقونة التطبيق (اختياري):</label><br>
+      <input type="file" name="appIcon" id="appIcon" accept="image/*"><br>
+
       <button type="submit">إنشاء التطبيق 📱</button>
     </form>
-    <p id="status"></p>
+
+    <div id="status">لم يتم إرسال شيء بعد.</div>
   </div>
 
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
+    document.getElementById('appForm').addEventListener('submit', async function(e){
       e.preventDefault();
-      document.getElementById('status').textContent = "⏳ جاري إنشاء التطبيق...";
-      
-      // إرسال البيانات إلى الخادم (سيضاف لاحقًا)
-      const res = await fetch("https://your-backend.onrender.com/build", {
-        method: "POST",
-        body: new FormData(e.target)
-      });
-      
-      if(res.ok) {
-        const data = await res.json();
-        document.getElementById('status').innerHTML = `✅ تم الإنشاء! <a href="${data.download}" style="color:gold;">تحميل APK</a>`;
-      } else {
-        document.getElementById('status').textContent = "❌ حدث خطأ أثناء الإنشاء";
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = '⏳ جاري الإرسال…';
+
+      const form = e.target;
+      const url = "https://ba24d4c9-335f-4858-98f6-812b88ed4512-00-1vkj8afebu86l.janeway.replit.dev/build";
+
+      const data = new FormData(form);
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          body: data
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not OK');
+        }
+        const result = await response.json();
+        if (result.download) {
+          statusEl.innerHTML = `✅ تم الإنشاء! <a href="${result.download}" style="color: gold;">تحميل التطبيق</a>`;
+        } else {
+          statusEl.textContent = '⚠️ تم الاستلام، لكن لم يتم إعطاؤك رابط تحميل.';
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '❌ حدث خطأ أثناء الاتصال بالخادم.';
       }
     });
   </script>
