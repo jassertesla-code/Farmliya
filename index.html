@@ -1,32 +1,37 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Farmliya — إحصائيات PUBG</title>
-  <style>
-    :root{--gold1:#f0c75e;--gold2:#d9a441;--muted:#9fb0b7}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Tahoma,Arial;background:#041226;color:#eaf6f2}
-    .wrap{max-width:980px;margin:24px auto;padding:18px}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-    .logo{display:flex;align-items:center;gap:12px}
-    .badge{width:58px;height:58px;border-radius:12px;background:linear-gradient(90deg,var(--gold1),var(--gold2));display:flex;align-items:center;justify-content:center;color:#071018;font-weight:900}
-    h1{margin:0}
-    .muted{color:var(--muted)}
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-    .card{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-    input,select,button,textarea{font-family:inherit;font-size:15px}
-    input[type="text"],select,textarea{width:100%;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
-    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(90deg,var(--gold1),var(--gold2));color:#071018;font-weight:800}
-    .btn.secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
-    .result{margin-top:10px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.18);font-size:14px}
-    pre{white-space:pre-wrap;margin:0}
-    footer{text-align:center;color:var(--muted);margin-top:18px}
-    @media(max-width:900px){ .grid{grid-template-columns:1fr} }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Farmliya — إحصائيات PUBG (مباشر)</title>
+<style>
+  :root{--gold:#f0c75e;--muted:#9fb0b7}
+  *{box-sizing:border-box}
+  body{font-family:Tahoma,Arial;background:#041226;color:#eaf6f2;margin:0;padding:18px}
+  .wrap{max-width:980px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .badge{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--gold),#d9a441);display:flex;align-items:center;justify-content:center;color:#071018;font-weight:900}
+  h1{margin:0}
+  nav{display:flex;gap:8px;margin:12px 0}
+  .tab{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted);cursor:pointer}
+  .tab.active{background:rgba(240,199,94,0.12);color:#fff}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+  .card{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  input,select,button,textarea{font-family:inherit;font-size:15px}
+  input[type="text"],select,textarea{width:100%;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit}
+  .row{display:flex;gap:10px}
+  .col{flex:1}
+  .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(90deg,var(--gold),#d9a441);color:#071018;font-weight:800}
+  .btn.secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+  .result{margin-top:10px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.18);font-size:14px}
+  pre{white-space:pre-wrap;margin:0;color:#dfffe6}
+  footer{text-align:center;color:var(--muted);margin-top:18px}
+  @media(max-width:900px){ .grid{grid-template-columns:1fr} }
+  .warn{color:#ffb3b3}
+  .ok{color:#b7f3c1}
+  .muted-small{color:var(--muted);font-size:13px}
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -35,105 +40,83 @@
         <div class="badge">UC</div>
         <div>
           <h1>Farmliya</h1>
-          <div class="muted">شحن + إحصائيات PUBG (تجريبي)</div>
+          <div class="muted-small">شحن + إحصائيات PUBG (مباشر)</div>
         </div>
       </div>
-      <div class="muted">نسخة تجريبية</div>
+      <div class="muted-small">تجريبي — ضع المفتاح بحذر</div>
     </header>
 
-    <nav style="margin-bottom:12px">
-      <button class="btn active" id="tabHome">الرئيسية</button>
-      <button class="btn secondary" id="tabStats">إحصائيات اللاعب</button>
+    <nav>
+      <button class="tab active" id="tHome">الرئيسية</button>
+      <button class="tab" id="tStats">إحصائيات اللاعب</button>
     </nav>
 
     <div class="grid">
-      <!-- main column -->
       <main>
-        <!-- Home (charge) -->
-        <section id="homeSection" class="card">
-          <h3 style="margin-top:0">⚡ شحن شدات ببجي</h3>
+        <!-- Home -->
+        <section id="home" class="card section">
+          <h3 style="margin-top:0">⚡ شحن شدات</h3>
           <form id="chargeForm">
-            <label>🎮 Player ID</label>
+            <label>Player ID</label>
             <input id="playerId" type="text" placeholder="مثال: 123456789" required>
-
             <div class="row" style="margin-top:8px">
               <div class="col">
-                <label>💰 UC</label>
-                <select id="ucAmount" required>
-                  <option value="">اختر الكمية</option>
-                  <option value="60">60</option>
-                  <option value="300">300</option>
-                  <option value="600">600</option>
-                  <option value="1200">1200</option>
+                <label>UC</label>
+                <select id="uc" required>
+                  <option value="">اختر</option><option>60</option><option>300</option><option>600</option><option>1200</option>
                 </select>
               </div>
               <div class="col">
-                <label>🌍 السيرفر</label>
-                <select id="server" required>
-                  <option value="">اختر السيرفر</option>
-                  <option value="ASIA">ASIA</option>
-                  <option value="EUROPE">EUROPE</option>
-                  <option value="NA">NA</option>
-                </select>
+                <label>السيرفر</label>
+                <select id="server" required><option value="">اختر</option><option>ASIA</option><option>EUROPE</option><option>NA</option></select>
               </div>
             </div>
-
-            <label style="margin-top:8px">👤 اسم اللاعب (اختياري)</label>
-            <input id="playerName" type="text" placeholder="اسم اللاعب">
-
-            <div style="margin-top:10px">
-              <label><input id="consent" type="checkbox"> أوافق على استخدام البيانات للاختبار</label>
-            </div>
-
-            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <label style="margin-top:8px">اسم (اختياري)</label>
+            <input id="pname" type="text" placeholder="اسم اللاعب">
+            <div style="margin-top:10px"><label><input id="consent" type="checkbox"> أوافق على الاستخدام الاختباري</label></div>
+            <div style="margin-top:12px;display:flex;gap:8px;">
               <button class="btn" type="submit">اشحن الآن</button>
-              <button class="btn secondary" id="clearCharge" type="button">مسح</button>
+              <button class="btn secondary" id="clear" type="button">مسح</button>
             </div>
-
             <div id="chargeStatus" class="result" style="display:none"></div>
           </form>
         </section>
 
-        <!-- Stats section -->
-        <section id="statsSection" class="card" style="display:none">
-          <h3 style="margin-top:0">🔎 إحصائيات اللاعب (PUBG)</h3>
-          <p class="muted">أدخل اسم اللاعب (player name) أو Player ID واختر المنصة ثم اضغط "جلب".</p>
+        <!-- Stats -->
+        <section id="stats" class="card section" style="display:none">
+          <h3 style="margin-top:0">🔎 إحصائيات اللاعب</h3>
+          <p class="muted-small">اكتب Player name أو Player ID ثم اختر المنصة واضغط "جلب".</p>
 
           <div style="display:grid;grid-template-columns:1fr 160px;gap:10px">
-            <input id="statQuery" type="text" placeholder="مثال: someplayer أو account-id-xxxx">
-            <select id="statPlatform">
-              <option value="steam">PC (Steam)</option>
-              <option value="psn">PlayStation</option>
-              <option value="xbox">Xbox</option>
-              <option value="kakao">Kakao (KR)</option>
-            </select>
+            <input id="query" type="text" placeholder="مثال: someplayer أو account-xxxxxxxx">
+            <select id="platform"><option value="steam">steam</option><option value="kakao">kakao</option><option value="psn">psn</option><option value="xbox">xbox</option></select>
           </div>
 
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button id="fetchPlayer" class="btn">جلب معلومات اللاعب</button>
-            <button id="fetchSeason" class="btn secondary">جلب إحصاءات الموسم</button>
+          <div style="margin-top:10px;display:flex;gap:8px;">
+            <button id="btnFetch" class="btn">جلب معلومات اللاعب</button>
+            <button id="btnSeason" class="btn secondary">جلب إحصاءات موسم (Season ID)</button>
           </div>
 
-          <div style="margin-top:10px">
-            <label>Season ID (اختياري لجلب إحصاءات موسم محدد)</label>
-            <input id="seasonInput" type="text" placeholder="مثال: division.bro.official.pc-2018 (اتركه إن لم تكن تملك)"/>
+          <div style="margin-top:8px">
+            <label>Season ID (اختياري)</label>
+            <input id="seasonId" placeholder="مثال: division.bro.official.pc-2018">
           </div>
 
-          <div id="statsResult" class="result" style="display:none"></div>
+          <div id="statsOut" class="result" style="display:none"></div>
         </section>
       </main>
 
-      <!-- sidebar -->
       <aside>
         <div class="card">
-          <h4 style="margin:0 0 8px 0">ملاحظات</h4>
-          <p class="muted" style="font-size:13px">
-            سكربت يطلب الـPUBG Developer API مباشرةً من المتصفح. إذا وضعت التوكن داخل هذا الملف، فسيظهر لأي من يفحص الصفحة.
-            استخدمه للاختبار فقط. للحماية لاحقًا، انقل المفتاح إلى Backend.
-          </p>
-          <div style="margin-top:10px">
-            <strong>حالة الطلب</strong>
-            <div id="sideLog" style="margin-top:8px;font-size:14px;color:var(--muted)">جاهز</div>
+          <h4 style="margin:0 0 8px 0">ملاحظات سريعة</h4>
+          <ul class="muted-small" style="margin:6px 0 0 18px;padding-left:6px">
+            <li>وضعت مفتاح API مباشرة بالملف — مررره. هذا يظهر للكل إن فُتح المصدر.</li>
+            <li>إذا ظهرت رسالة <strong>Unauthorized</strong> → المفتاح غير صالح أو لم تُفعّل app في لوحة PUBG Developer أو استعمال منصة خاطئة.</li>
+            <li>إذا ظهر خطأ CORS → تحتاج backend proxy (أنصح بهذا للاستخدام الحقيقي).</li>
+          </ul>
+          <div style="margin-top:12px">
+            <strong>حالة</strong>
+            <div id="log" class="muted-small" style="margin-top:8px">جاهز</div>
           </div>
         </div>
       </aside>
@@ -143,199 +126,175 @@
   </div>
 
 <script>
-/* ====== ضع التوكن الذي أعطيتَه هنا بالضبط ======
-   (المفتاح سيصبح مكشوفًا للمتصفح – أنت وافقت)
-*/
+/* === هنا وضعت المفتاح الذي أرسلته لي؛ إن أردت تغييره غيّره مباشرة هنا === */
 const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiOiJkYcGlbGhbcGlGiOiJIUzI1NiJ9.eyJqdGkI0iI3YZFjMTcyMC05YmI5LTAxM2UtMmUzMmU0OC0yNmQxYjtiMzY4ZGYiLCJpc3MiOiJnYw1lbG9jMzAyVyIsImFfF0IjoxNzYyMTcy0TUwLCIzdWdI0IjoiJibgYWIa9GZzSlslnRPdGxlIjoiCHVIZYlmFwCCl6ImIzMcm1lcXIhln0z0zY7xY2IyZGlmFwCCl6ImIzMcm1lcXIhln0z0zY7XY2IzZGlmFwCCl6ImIzMcm1lcXIhln0z0zY7XNvZGhU2hlZFAnZEJVQGgTIBU5tD577XZQ1A8hhiC8";
-/* ================================================== */
+/* ==================================================================== */
 
-/* Default platform for queries (you can change in UI) */
-const DEFAULT_BASE = "https://api.pubg.com/shards";
-
-/* helpers */
+const API_BASE = "https://api.pubg.com/shards"; // we'll call: /shards/{platform}/players...
 const $ = id => document.getElementById(id);
-function show(el, html){ el.style.display='block'; el.innerHTML = html; }
-function hide(el){ el.style.display='none'; }
+function log(msg){ $('log').textContent = msg; }
 
 /* tabs */
-$('tabHome').addEventListener('click', ()=> {
-  $('homeSection').style.display='block';
-  $('statsSection').style.display='none';
-});
-$('tabStats').addEventListener('click', ()=> {
-  $('homeSection').style.display='none';
-  $('statsSection').style.display='block';
-});
+$('tHome').addEventListener('click', ()=>{ $('home').style.display='block'; $('stats').style.display='none'; $('tHome').classList.add('active'); $('tStats').classList.remove('active'); });
+$('tStats').addEventListener('click', ()=>{ $('home').style.display='none'; $('stats').style.display='block'; $('tHome').classList.remove('active'); $('tStats').classList.add('active'); });
 
-/* small logger */
-function logSide(msg){ $('sideLog').textContent = msg; }
-
-/* ====== Charge form behavior (keeps local record — no telegram proxy here) ====== */
-$('chargeForm').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const playerId = $('playerId').value.trim();
-  const uc = $('ucAmount').value;
-  const server = $('server').value;
-  const playerName = $('playerName').value.trim();
-  const consent = $('consent').checked;
-  const status = $('chargeStatus');
-
-  status.style.display = 'block';
-  if(!playerId || !uc || !server || !consent){
-    status.innerHTML = '<span style="color:#ff9b9b">املأ الحقول المطلوبة ووافق على الاستخدام.</span>';
-    return;
-  }
-
-  // Save locally (safer than exposing telegram token)
-  const logs = JSON.parse(localStorage.getItem('farm_logs')||'[]');
-  logs.unshift({time:new Date().toLocaleString(), playerId, uc, server, playerName});
-  localStorage.setItem('farm_logs', JSON.stringify(logs.slice(0,200)));
-  status.innerHTML = '<span style="color:#b7f3c1">تم حفظ الطلب محلياً. أنصح باستخدام Backend لإرسال التليغرام بطريقة آمنة.</span>';
-});
-
-/* clear charge form */
-$('clearCharge').addEventListener('click', ()=> {
-  $('chargeForm').reset();
-  $('chargeStatus').style.display='none';
-});
-
-/* ====== PUBG API calls (client-side, using your key) ====== */
-
-async function apiFetch(path){
-  const url = path.startsWith('http') ? path : `${DEFAULT_BASE}/${path}`;
-  const resp = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${PUBG_API_KEY}`,
-      'Accept': 'application/vnd.api+json'
+/* safe fetch wrapper with diagnostics */
+async function pubgFetch(url){
+  const headers = {
+    "Authorization": `Bearer ${PUBG_API_KEY}`,
+    "Accept": "application/vnd.api+json"
+  };
+  try{
+    const res = await fetch(url, { headers });
+    if(!res.ok){
+      let body = null;
+      try{ body = await res.json(); }catch(e){ body = await res.text().catch(()=>null); }
+      const title = (body && body.errors && body.errors[0] && body.errors[0].title) ? body.errors[0].title : res.statusText;
+      const detail = (body && body.errors && body.errors[0] && body.errors[0].detail) ? body.errors[0].detail : (typeof body === 'string'?body:JSON.stringify(body||{}));
+      const err = new Error(`${res.status} ${title} - ${detail}`);
+      err.status = res.status; err.body = body;
+      throw err;
     }
-  });
-  if(!resp.ok){
-    const txt = await resp.text().catch(()=>resp.statusText);
-    throw { status: resp.status, text: txt };
+    return await res.json();
+  }catch(e){
+    throw e;
   }
-  return await resp.json();
 }
 
-/* helper: try get player by name or id */
+/* resolve player by name or id */
 async function resolvePlayer(query, platform){
-  // If query looks like an id (contains '-' or long digits) try direct GET /players/{id}
-  if(query.includes('-') || query.length > 16 || /^\d+$/.test(query)) {
+  // try direct id fetch if it looks like an id (contains '-' or long length)
+  if(query.includes('-') || query.length > 16 || /^\d+$/.test(query)){
     try{
-      const json = await apiFetch(`${platform}/players/${encodeURIComponent(query)}`);
-      return json;
+      return await pubgFetch(`${API_BASE}/${platform}/players/${encodeURIComponent(query)}`);
     }catch(e){
-      // fallback to name search
+      // fall through to name search
     }
   }
   // name search
-  const json = await apiFetch(`${platform}/players?filter[playerNames]=${encodeURIComponent(query)}`);
-  return json;
+  return await pubgFetch(`${API_BASE}/${platform}/players?filter[playerNames]=${encodeURIComponent(query)}`);
 }
 
-/* fetch player basic info + attempt last match */
-$('fetchPlayer').addEventListener('click', async ()=>{
-  const q = $('statQuery').value.trim();
-  const platform = $('statPlatform').value || 'steam';
-  const out = $('statsResult');
-  out.style.display = 'block';
-  if(!q){ out.innerHTML = '<span class="muted">أدخل اسم اللاعب أو Player ID.</span>'; return; }
-  if(!PUBG_API_KEY || PUBG_API_KEY.includes('PASTE')){ out.innerHTML = '<span style="color:#ff9b9b">ضع مفتاح PUBG في المتغير PUBG_API_KEY داخل الملف.</span>'; return; }
+/* Fetch basic player info */
+$('btnFetch').addEventListener('click', async ()=>{
+  const q = $('query').value.trim();
+  const platform = $('platform').value;
+  const out = $('statsOut'); out.style.display='block'; out.innerHTML = '🔄 جارٍ جلب البيانات...';
+  log('جلب بيانات...');
 
-  out.innerHTML = '🔄 جارٍ جلب بيانات اللاعب...';
-  logSide('جلب بيانات اللاعب...');
+  if(!q){ out.innerHTML = '<span class="muted-small">أدخل اسم اللاعب أو ID</span>'; return; }
+  if(!PUBG_API_KEY || PUBG_API_KEY.includes('PASTE')){ out.innerHTML = '<span class="warn">ضع مفتاح PUBG في المتغير PUBG_API_KEY داخل الملف.</span>'; return; }
 
   try{
     const pjson = await resolvePlayer(q, platform);
-    // find player object
+    // normalize to first data object
     let pdata = null;
     if(pjson.data && Array.isArray(pjson.data)) pdata = pjson.data[0];
     else if(pjson.data) pdata = pjson.data;
-    else throw { message: 'لا توجد بيانات لاعب' };
+    else throw new Error('لم يتم إرجاع بيانات لاعب');
 
     const pid = pdata.id;
-    const name = (pdata.attributes && pdata.attributes.name) || '(غير متاح)';
-    const createdAt = (pdata.attributes && pdata.attributes.createdAt) || null;
-
-    // try to fetch first related match for last activity (best-effort)
-    let lastMatchTime = null;
+    const name = pdata.attributes && pdata.attributes.name;
+    const created = pdata.attributes && pdata.attributes.createdAt;
+    // try best-effort to get last match time from relationships.matches (if present)
+    let lastMatch = null;
     try{
-      const rels = (pdata.relationships) || {};
-      const matches = (rels.matches && rels.matches.data) || [];
+      const rel = pdata.relationships || {};
+      const matches = (rel.matches && rel.matches.data) || [];
       if(matches.length){
-        const matchId = matches[0].id;
-        const mjson = await apiFetch(`${platform}/matches/${encodeURIComponent(matchId)}`);
-        lastMatchTime = mjson.data && mjson.data.attributes && mjson.data.attributes.createdAt;
+        const mid = matches[0].id;
+        const mjson = await pubgFetch(`${API_BASE}/${platform}/matches/${encodeURIComponent(mid)}`);
+        lastMatch = (mjson.data && mjson.data.attributes && mjson.data.attributes.createdAt) || null;
       }
-    }catch(e){ /* ignore */ }
+    }catch(e){
+      // ignore match fetch errors
+    }
 
-    let html = `<div><strong>اللاعب:</strong> ${name} <small class="muted">(${pid})</small></div>`;
-    html += `<div><strong>تاريخ الإنشاء:</strong> ${createdAt ? new Date(createdAt).toLocaleString() : 'غير متاح'}</div>`;
-    html += `<div><strong>آخر مباراة مسجلة:</strong> ${lastMatchTime ? new Date(lastMatchTime).toLocaleString() : 'لا توجد'}</div>`;
-    html += `<div style="margin-top:8px" class="muted">ملاحظة: هذه بيانات مسجلة من API الرسمي — لا تمثل حالة الاتصال الحقيقية (online/offline).</div>`;
+    let html = `<div><strong>اللاعب:</strong> ${name || '—'} <small class="muted-small">(${pid})</small></div>`;
+    html += `<div><strong>تاريخ الإنشاء:</strong> ${created? new Date(created).toLocaleString() : 'غير متاح'}</div>`;
+    html += `<div><strong>آخر مباراة مسجلة:</strong> ${lastMatch? new Date(lastMatch).toLocaleString() : 'لا توجد بيانات'}</div>`;
+    html += `<div class="muted-small" style="margin-top:8px">ملاحظة: هذه بيانات مسجلة من PUBG API ولا تمثل حالة الاتصال الحقيقية.</div>`;
 
     out.innerHTML = html;
-    logSide('تم جلب بيانات اللاعب.');
-  }catch(err){
-    console.error(err);
-    const msg = (err && (err.message || err.text)) || 'خطأ غير معروف';
-    out.innerHTML = `<span style="color:#ff9b9b">خطأ: ${msg}</span>`;
-    logSide('خطأ أثناء جلب البيانات');
+    log('تم جلب بيانات اللاعب.');
+  }catch(e){
+    console.error(e);
+    // Friendly error messages for common cases
+    if(e.status === 401 || (e.message && e.message.toLowerCase().includes('unauthorized'))){
+      out.innerHTML = `<div class="warn"><strong>Unauthorized</strong> — المفتاح غير صالح أو لم تُفعّل التطبيق في لوحة المطورين.</div>
+        <div class="muted-small" style="margin-top:8px">
+          خطوات سريعة: <ol style="text-align:right;margin:6px 0 0 0;padding-left:12px">
+            <li>تأكد من أنك نسخت مفتاح الـAPI بالكامل بدون فراغات.</li>
+            <li>في لوحة developer.pubg.com -> Apps تأكد أن الـapp مفعل وموافقات الاستخدام مطابقة.</li>
+            <li>تحقق من أنك تستخدم الشارد الصحيح (steam/kakao/psn/xbox).</li>
+            <li>للاستخدام العام انقل المفتاح إلى backend لأن المتصفح يعرّضه للعامة.</li>
+          </ol>
+        </div>`;
+      log('Unauthorized — تحقق من المفتاح/التفعيل.');
+    } else if(e.status === 403){
+      out.innerHTML = `<div class="warn"><strong>Forbidden (403)</strong> — المفتاح لا يملك صلاحية الوصول أو محدّدات rate-limit.</div>`;
+      log('Forbidden (403).');
+    } else if(e.status === 429){
+      out.innerHTML = `<div class="warn"><strong>Rate limit</strong> — عدّل عدد الطلبات أو اضف caching.</div>`;
+      log('Rate limit.');
+    } else {
+      const msg = (e.message || JSON.stringify(e).slice(0,300));
+      out.innerHTML = `<div class="warn">خطأ أثناء جلب البيانات: ${msg}</div>`;
+      log('خطأ عام أثناء الجلب.');
+    }
   }
 });
 
-/* fetch season stats (requires valid Season ID) */
-$('fetchSeason').addEventListener('click', async ()=>{
-  const q = $('statQuery').value.trim();
-  const platform = $('statPlatform').value || 'steam';
-  const season = $('seasonInput').value.trim();
-  const out = $('statsResult');
-  out.style.display = 'block';
-  if(!q){ out.innerHTML = '<span class="muted">أدخل اسم اللاعب أو Player ID.</span>'; return; }
-  if(!season){ out.innerHTML = '<span class="muted">أدخل Season ID في الحقل المخصّص.</span>'; return; }
-  if(!PUBG_API_KEY || PUBG_API_KEY.includes('PASTE')){ out.innerHTML = '<span style="color:#ff9b9b">ضع مفتاح PUBG في المتغير PUBG_API_KEY داخل الملف.</span>'; return; }
+/* Fetch season stats */
+$('btnSeason').addEventListener('click', async ()=>{
+  const q = $('query').value.trim();
+  const platform = $('platform').value;
+  const season = $('seasonId').value.trim();
+  const out = $('statsOut'); out.style.display='block'; out.innerHTML = '🔄 جلب إحصاءات الموسم...';
+  log('جلب إحصاءات الموسم...');
 
-  out.innerHTML = '🔄 جلب إحصاءات الموسم...';
-  logSide('جلب إحصاءات الموسم...');
+  if(!q){ out.innerHTML = '<span class="muted-small">أدخل اسم اللاعب أو ID</span>'; return; }
+  if(!season){ out.innerHTML = '<span class="muted-small">أدخل Season ID</span>'; return; }
 
   try{
-    // resolve player id first
-    let playerJson = await resolvePlayer(q, platform);
+    // resolve player id
+    const pjson = await resolvePlayer(q, platform);
     let pdata = null;
-    if(playerJson.data && Array.isArray(playerJson.data)) pdata = playerJson.data[0];
-    else if(playerJson.data) pdata = playerJson.data;
-    else throw { message: 'لم يعثر على اللاعب' };
+    if(pjson.data && Array.isArray(pjson.data)) pdata = pjson.data[0];
+    else if(pjson.data) pdata = pjson.data;
+    else throw new Error('لم يعثر على اللاعب');
 
-    const playerId = pdata.id;
-    const seasonJson = await apiFetch(`${platform}/players/${encodeURIComponent(playerId)}/seasons/${encodeURIComponent(season)}`);
-
+    const pid = pdata.id;
+    const seasonJson = await pubgFetch(`${API_BASE}/${platform}/players/${encodeURIComponent(pid)}/seasons/${encodeURIComponent(season)}`);
     const attrs = (seasonJson.data && seasonJson.data.attributes) || {};
-    const stats = attrs.gameModeStats || attrs || {};
+    const gm = attrs.gameModeStats || attrs || {};
 
-    let html = `<div><strong>اللاعب:</strong> ${playerId}</div>`;
-    html += `<div><strong>Season:</strong> ${season}</div>`;
-
-    if(stats && typeof stats === 'object' && Object.keys(stats).length){
+    let html = `<div><strong>اللاعب:</strong> ${pid}</div><div><strong>Season:</strong> ${season}</div>`;
+    if(gm && Object.keys(gm).length){
       html += `<div style="margin-top:8px"><strong>إحصاءات حسب نمط اللعب:</strong></div>`;
-      for(const mode of Object.keys(stats)){
-        const s = stats[mode];
-        html += `<div style="margin:6px 0;padding:8px;border-radius:8px;background:rgba(0,0,0,0.12)"><strong>${mode}</strong><br/>`;
+      for(const mode of Object.keys(gm)){
+        const s = gm[mode];
+        html += `<div style="margin:8px 0;padding:8px;border-radius:8px;background:rgba(0,0,0,0.12)"><strong>${mode}</strong><br/>`;
         const keys = ['roundsPlayed','wins','kills','assists','damageDealt','longestKill','timeSurvived','kd'];
         for(const k of keys){
-          if(s[k] !== undefined) html += `<small class="muted">${k}:</small> ${s[k]} &nbsp;`;
+          if(s[k] !== undefined) html += `<small class="muted-small">${k}:</small> ${s[k]} &nbsp;`;
         }
         html += `</div>`;
       }
     } else {
-      html += `<div class="muted">لم تُرجع بيانات موسم واضحة — تأكد من Season ID.</div>`;
+      html += `<div class="muted-small">لا توجد بيانات موسم واضحة — تأكد من Season ID.</div>`;
     }
-
     out.innerHTML = html;
-    logSide('تم جلب إحصاءات الموسم.');
-  }catch(err){
-    console.error(err);
-    const msg = (err && (err.message || err.text)) || 'خطأ أثناء جلب إحصاءات الموسم';
-    out.innerHTML = `<span style="color:#ff9b9b">خطأ: ${msg}</span>`;
-    logSide('خطأ أثناء جلب إحصاءات الموسم');
+    log('تم جلب إحصاءات الموسم.');
+  }catch(e){
+    console.error(e);
+    if(e.status === 401) {
+      $('statsOut').innerHTML = `<div class="warn">Unauthorized — تحقق من مفتاح الـAPI/صلاحيات التطبيق.</div>`;
+      log('Unauthorized');
+    } else {
+      $('statsOut').innerHTML = `<div class="warn">خطأ: ${(e.message||e.text||JSON.stringify(e)).slice(0,300)}</div>`;
+      log('خطأ أثناء جلب إحصاءات الموسم.');
+    }
   }
 });
 </script>
