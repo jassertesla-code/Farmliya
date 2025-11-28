@@ -1,159 +1,374 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز شحن UC لـ PUBG Mobile</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #1e2129; /* خلفية داكنة */
-            color: #ffffff; /* نص أبيض */
-            margin: 0;
-            padding: 0;
-            text-align: right; /* محاذاة النص لليمين للعربية */
-            direction: rtl;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XProjectPoint — شارك واربح شدات PUBG (الأولى في الجزائر)</title>
 
-        .header {
-            background-color: #007bff; /* شريط علوي أزرق */
-            padding: 15px 0;
-            text-align: center;
-            border-bottom: 3px solid #ffc107; /* شريط أصفر */
-        }
+<!-- خطوط -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
-        .header h1 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 28px;
-        }
+<style>
+  :root{
+    --bg-1: #0f1724;
+    --bg-2: #1f2330;
+    --accent-1: #8e2de2;
+    --accent-2: #ffb703;
+    --glass: rgba(255,255,255,0.04);
+    --success: #2ecc71;
+    --danger: #ff6b6b;
+  }
+  html,body{height:100%;margin:0;font-family:'Cairo', 'Poppins', sans-serif;background:
+    radial-gradient(800px 400px at 10% 10%, rgba(142,45,226,0.12), transparent 10%),
+    radial-gradient(700px 350px at 90% 90%, rgba(255,183,3,0.06), transparent 10%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#eef2ff; direction:rtl; text-align:right;}
+  *{box-sizing:border-box}
 
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #2a2e37; /* خلفية المحتوى */
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
+  /* container */
+  .wrap{max-width:1100px;margin:36px auto;padding:28px;backdrop-filter: blur(8px);
+       background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+       border-radius:14px; box-shadow: 0 10px 40px rgba(2,6,23,0.7);}
 
-        .section-title {
-            color: #ffc107;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 22px;
-        }
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .brand{display:flex;gap:14px;align-items:center}
+  .logo{
+    width:64px;height:64px;border-radius:12px;background:
+    conic-gradient(from 200deg at 50% 50%, #ffd703, #ff8c00, #8e2de2);
+    display:flex;align-items:center;justify-content:center;color:#0b0b0b;font-weight:800;font-size:22px;box-shadow:0 6px 18px rgba(0,0,0,0.5)
+  }
+  .brand h1{margin:0;font-size:20px}
+  .brand p{margin:0;font-size:13px;color:#dcd7ff; opacity:0.9}
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+  .tagline{font-weight:600;color:#f4edea;opacity:0.95}
+  .badge{background:linear-gradient(90deg,var(--accent-1),#5b21b6);padding:8px 12px;border-radius:999px;font-weight:700;color:white;font-size:13px;box-shadow:0 6px 15px rgba(142,45,226,0.18)}
 
-        .input-group input[type="text"] {
-            width: 98%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #444;
-            background-color: #333;
-            color: #fff;
-            border-radius: 5px;
-        }
+  main{display:grid;grid-template-columns: 420px 1fr;gap:22px}
+  @media(max-width:900px){main{grid-template-columns:1fr}}
 
-        .uc-option {
-            background-color: #333742;
-            border: 2px solid #555;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
+  /* بطاقة الإحالة */
+  .card{background:var(--glass);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+  .ref-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .ref-title h2{margin:0;font-size:18px}
+  .ref-link{background:linear-gradient(90deg,#0f1724, rgba(255,255,255,0.02)); padding:12px;border-radius:10px;display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .ref-link a{color:#fff;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;display:inline-block}
+  .ref-actions{display:flex;gap:8px;align-items:center}
+  .btn{cursor:pointer;padding:10px 12px;border-radius:10px;border:none;font-weight:700;letter-spacing:0.2px}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
+  .btn-primary{background:linear-gradient(90deg,var(--accent-1), #6b21a8); color:white;box-shadow:0 8px 20px rgba(142,45,226,0.12)}
+  .small{font-size:13px;color:#d7d2ff;opacity:0.95}
 
-        .uc-option:hover {
-            border-color: #ffc107;
-            background-color: #3e424c;
-        }
+  /* progress */
+  .progress-wrap{margin-top:14px}
+  .progress-bar{width:100%;height:16px;background:rgba(255,255,255,0.04);border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.4)}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent-2), #ff8c42);transition:width 600ms cubic-bezier(.2,.9,.2,1)}
+  .stats{display:flex;justify-content:space-between;margin-top:10px;font-weight:700}
 
-        .uc-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
-        }
+  /* rules & numbers */
+  .numbers{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  .num-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));border:1px solid rgba(255,255,255,0.02)}
+  .num-left{font-size:14px;color:#fff;font-weight:700}
+  .num-right{font-size:15px;color:var(--accent-2);font-weight:800}
 
-        .uc-price {
-            font-size: 16px;
-            color: #007bff;
-            font-weight: bold;
-        }
+  /* features / how it works */
+  .how{padding-left:14px}
+  .how h3{margin:0 0 10px 0;font-size:18px}
+  .steps{display:flex;flex-direction:column;gap:12px}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .step .ico{width:46px;height:46;border-radius:10px;background:linear-gradient(180deg,#fff0,#fff0);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03)}
+  .step p{margin:0;font-size:14px;color:#e9e6ff;opacity:0.95}
 
-        .btn-checkout {
-            background-color: #ffc107;
-            color: #1e2129;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            display: block;
-            width: 100%;
-            margin-top: 30px;
-            transition: background-color 0.3s;
-        }
+  /* big CTA */
+  .cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+  .claim{flex:1;min-width:180px}
+  .simulate{min-width:160px}
 
-        .btn-checkout:hover {
-            background-color: #e0a800;
-        }
-    </style>
+  /* rewards list */
+  .rewards{display:grid;grid-template-columns:repeat(1,1fr);gap:12px;margin-top:14px}
+  .reward-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03)}
+  .reward-item h4{margin:0;font-size:15px}
+  .reward-item span{font-weight:800;color:#ffd966}
+
+  footer{margin-top:20px;text-align:center;color:#cfcbe8;opacity:0.9;font-size:13px;padding-bottom:6px}
+  .note{margin-top:12px;font-size:13px;color:#dcd7ff;opacity:0.9}
+
+  /* confetti dots */
+  .confetti{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+  .dot{position:absolute;width:10px;height:10px;border-radius:50%;opacity:0;transform:translateY(-20px)}
+</style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>مركز شحن UC الرسمي</h1>
-        <p>اختر حزمتك وابدأ اللعب!</p>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">XP</div>
+      <div>
+        <h1>XProjectPoint</h1>
+        <p class="tagline">أول شركة جزائرية تمنحك نظام نقاط قابل لتحويل إلى شدات PUBG — شارك، اجمع، واربح!</p>
+      </div>
     </div>
 
-    <div class="container">
-        <h2 class="section-title">1. إدخال هوية اللاعب (ID)</h2>
-        <div class="input-group">
-            <label for="player-id">الرقم التعريفي للاعب (Player ID)</label>
-            <input type="text" id="player-id" placeholder="أدخل الرقم التعريفي المكون من 10 أرقام" required>
-        </div>
-
-        <h2 class="section-title">2. اختيار كمية UC</h2>
-
-        <div class="uc-option">
-            <span class="uc-amount">60 UC</span>
-            <span class="uc-price">2.99 دولار أمريكي</span>
-        </div>
-
-        <div class="uc-option">
-            <span class="uc-amount">300 + 25 UC مجانية</span>
-            <span class="uc-price">14.99 دولار أمريكي</span>
-        </div>
-
-        <div class="uc-option">
-            <span class="uc-amount">600 + 60 UC مجانية</span>
-            <span class="uc-price">29.99 دولار أمريكي</span>
-        </div>
-
-        <div class="uc-option">
-            <span class="uc-amount">1500 + 300 UC مجانية</span>
-            <span class="uc-price">74.99 دولار أمريكي</span>
-        </div>
-
-        <h2 class="section-title">3. اختيار طريقة الدفع</h2>
-        <div class="input-group">
-            <p>اختر طريقة الدفع (Visa / MasterCard / PayPal / رصيد الهاتف)</p>
-        </div>
-
-        <button class="btn-checkout">متابعة إلى الدفع</button>
+    <div style="text-align:left;">
+      <div class="badge">حصري — تحويل نقاط إلى شدات</div>
     </div>
-    </body>
+  </header>
+
+  <main>
+    <!-- ========= اليسار: بطاقة الإحالة و الإحصائيات ========= -->
+    <section>
+      <div class="card">
+        <div class="ref-title">
+          <h2>رابط إحالتك</h2>
+          <div class="small">شارك واربح 5 نقاط لكل عضو ينضم</div>
+        </div>
+
+        <!-- referral link area -->
+        <div class="ref-link" id="refArea">
+          <a id="refLink" href="https://t.me/xprojectpoint_bot?start=ref_5653032481_bvsvxd" target="_blank" rel="noopener noreferrer">
+            https://t.me/xprojectpoint_bot?start=ref_5653032481_bvsvxd
+          </a>
+          <div class="ref-actions">
+            <button class="btn btn-ghost" id="copyBtn" title="نسخ الرابط">نسخ</button>
+            <button class="btn btn-primary" id="shareBtn" title="مشاركة">مشاركة</button>
+          </div>
+        </div>
+
+        <!-- progress -->
+        <div class="progress-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div style="font-weight:800">نقاطك: <span id="points">0</span> / <span id="needed">100</span></div>
+            <div style="font-weight:600;color:#d7d2ff">قيمة: <span id="ucValue">0</span> شدة</div>
+          </div>
+          <div class="progress-bar" aria-hidden="true" style="margin-top:10px;">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="stats">
+            <div class="small">كل إحالة = <strong>5 نقاط</strong></div>
+            <div class="small">100 نقطة → <strong>1800 شدة</strong></div>
+          </div>
+
+          <div class="numbers">
+            <div class="num-row"><div class="num-left">نقاط مطلوبة</div><div class="num-right">100</div></div>
+            <div class="num-row"><div class="num-left">نقاط لكل إحالة</div><div class="num-right">5</div></div>
+            <div class="num-row"><div class="num-left">قيمة النقطة</div><div class="num-right">18 شدة لكل نقطة</div></div>
+          </div>
+
+          <div class="note">
+            <strong>ملاحظة:</strong> هذا العرض حصري وواقعي — عند وصول رصيدك إلى 100 نقطة تستطيع طلب تحويل نقاطك إلى 1800 شدة. بعد المطالبة نتحقق من الإحالات ثم نرسل الشدات عبر القناة الرسمية.
+          </div>
+
+          <div class="cta">
+            <button id="claimBtn" class="btn btn-primary claim">طلب تحويل الشدات</button>
+            <button id="simulateBtn" class="btn btn-ghost simulate">محاكاة إحالة (+5 نقاط)</button>
+            <button id="resetBtn" class="btn btn-ghost">إعادة ضبط (تجريبي)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- rewards -->
+      <div class="card" style="margin-top:14px">
+        <h3 style="margin:0 0 10px 0">قائمة التحويلات المتاحة</h3>
+        <div class="rewards">
+          <div class="reward-item"><h4>100 نقطة</h4><span>1800 شدة</span></div>
+          <div class="reward-item"><h4>50 نقطة</h4><span>900 شدة (غير متاحة حالياً)</span></div>
+          <div class="reward-item"><h4>مجموعة ترحيبية</h4><span>10 شدة (ترحيبية)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========= اليمين: تعليمات وشرح وميزات ========= -->
+    <aside class="card how">
+      <h3>كيف يعمل النظام؟</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="ico">①</div>
+          <p><strong>سجل أو سجل دخول</strong> في البوت عبر الرابط أعلاه. سيُسجَّل حسابك برقمك أو بمعرف Telegram.</p>
+        </div>
+        <div class="step">
+          <div class="ico">②</div>
+          <p><strong>شارك رابط الإحالة</strong> مع أصدقائك أو على مجموعات اللعبة — كل شخص ينضم باستخدام رابطك يعطيك <strong>5 نقاط</strong>.</p>
+        </div>
+        <div class="step">
+          <div class="ico">③</div>
+          <p><strong>تابع شريط التقدم</strong> في هذه الصفحة؛ عند الوصول إلى 100 نقطة، اضغط “طلب تحويل الشدات” وسنراجع الإحالات ثم نُرسل 1800 شدة إلى حسابك.</p>
+        </div>
+        <div class="step">
+          <div class="ico">④</div>
+          <p><strong>أمان وشفافية:</strong> نحن أول شركة جزائرية تطبق نظام نقاط قابل للتحويل إلى شدات مع نظام تحقق يدوي لإتمام العمليات بأمان.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:18px">لماذا تختار XProjectPoint؟</h3>
+      <ul style="margin:8px 0 0 0;padding-inline-start:18px;color:#e9e6ff;opacity:0.95">
+        <li>سهل — شارك رابطك واحصل على نقاط مباشرة.</li>
+        <li>واقعي — تحويل نقاط مؤكّد بعد التحقق.</li>
+        <li>دعم جزائري — خدمة محلية باللغة العربية والفرنسية عند الطلب.</li>
+      </ul>
+
+      <div style="margin-top:14px">
+        <h3>التعليمات السريعة</h3>
+        <ol style="padding-inline-start:18px;color:#e9e6ff;opacity:0.95">
+          <li>انسخ رابط الإحالة أو استخدم زر المشاركة.</li>
+          <li>اطلب تحويل عند الوصول إلى الحد الأدنى (100 نقطة).</li>
+          <li>احتفظ بالأدلة (الرسائل/لقطات الشاشة) إن لزم التحقق.</li>
+        </ol>
+      </div>
+
+      <div style="margin-top:14px">
+        <h3>اتصل بنا</h3>
+        <p class="small">لمساعدة أو شكاوى: راسل @xproject_support أو تواصل عبر البوت.</p>
+      </div>
+
+    </aside>
+  </main>
+
+  <footer>
+    تم إنشاء النظام بواسطة <strong>XProjectPoint</strong> — أول شركة جزائرية تقدم تحويل نقاط إلى شدات PUBG. © كل الحقوق محفوظة
+  </footer>
+
+</div>
+
+<!-- confetti container -->
+<div class="confetti" id="confetti"></div>
+
+<script>
+  // الثوابت
+  const pointsPerReferral = 5;
+  const pointsNeeded = 100;
+  const ucPer100 = 1800;
+  const ucPerPoint = ucPer100 / pointsNeeded; // 18
+
+  // عناصر DOM
+  const pointsEl = document.getElementById('points');
+  const neededEl = document.getElementById('needed');
+  const ucValueEl = document.getElementById('ucValue');
+  const progressFill = document.getElementById('progressFill');
+  const claimBtn = document.getElementById('claimBtn');
+  const simulateBtn = document.getElementById('simulateBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const shareBtn = document.getElementById('shareBtn');
+  const refLinkEl = document.getElementById('refLink');
+  const confettiContainer = document.getElementById('confetti');
+
+  // referral link (from user)
+  const referralLink = refLinkEl.href;
+
+  // load points from localStorage (for demo)
+  let points = parseInt(localStorage.getItem('xp_points') || '0', 10);
+  updateUI();
+
+  // update UI function
+  function updateUI(){
+    pointsEl.textContent = points;
+    neededEl.textContent = pointsNeeded;
+    const uc = Math.floor(points * ucPerPoint);
+    ucValueEl.textContent = uc;
+    const percent = Math.min(100, Math.round((points / pointsNeeded) * 100));
+    progressFill.style.width = percent + '%';
+    // enable claim if enough
+    if(points >= pointsNeeded){
+      claimBtn.classList.add('btn-primary');
+      claimBtn.disabled = false;
+      claimBtn.textContent = 'طلب تحويل الشدات (متاح)';
+    } else {
+      claimBtn.classList.remove('btn-primary');
+      claimBtn.disabled = false;
+      claimBtn.textContent = 'طلب تحويل الشدات';
+    }
+    localStorage.setItem('xp_points', points);
+  }
+
+  // simulate referral
+  simulateBtn.addEventListener('click', ()=>{
+    points += pointsPerReferral;
+    if(points > pointsNeeded) points = points; // allow overflow
+    updateUI();
+    if(points >= pointsNeeded) fireConfetti();
+  });
+
+  // reset (demo)
+  resetBtn.addEventListener('click', ()=>{
+    if(confirm('هل تريد إعادة ضبط النقاط (تجريبي)؟')){ points = 0; updateUI(); }
+  });
+
+  // claim (just demo: shows message; in reality send request to backend)
+  claimBtn.addEventListener('click', ()=>{
+    if(points < pointsNeeded){
+      alert('لم تصل بعد إلى 100 نقطة. اكمل جمع النقاط ثم اطلب التحويل.');
+      return;
+    }
+    // In a real system: هنا نرسل طلب إلى الخادم (API) للمطالبة بالشدات
+    const ok = confirm('لقد وصلت إلى الحد المطلوب (100 نقطة).\nهل تريد إرسال طلب التحويل الآن؟\n(في هذا المثال تجريبي — سيتم إعادة ضبط النقاط بعد التأكيد محلياً)');
+    if(ok){
+      // Simulate server-side verification and success
+      alert('تم إرسال طلبك للتحقق. بعد التدقيق سيتم تحويل 1800 شدة إلى حسابك. شكراً لثقتك!');
+      // reset points for demo
+      points = 0;
+      updateUI();
+    }
+  });
+
+  // copy referral link
+  copyBtn.addEventListener('click', async ()=>{
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      copyBtn.textContent = 'تم النسخ ✓';
+      setTimeout(()=> copyBtn.textContent = 'نسخ', 1500);
+    } catch(e){
+      prompt('انسخ الرابط يدوياً:', referralLink);
+    }
+  });
+
+  // share via Telegram / WhatsApp (opens share links)
+  shareBtn.addEventListener('click', ()=>{
+    const text = `انضمّ عبر رابط الدعوة واحصل/احصلي على نقاط: ${referralLink}\nكل إحالة = ${pointsPerReferral} نقاط — اجمع 100 نقطة لتحصل على 1800 شدة!`;
+    // open Telegram share (web)
+    const tg = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(text)}`;
+    // also provide WhatsApp option in new tab
+    const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    // create a small menu
+    const choice = confirm('فتح المشاركة عبر Telegram؟ (إلغاء سيفتح WhatsApp في نافذة جديدة)');
+    if(choice){
+      window.open(tg, '_blank');
+    } else {
+      window.open(wa, '_blank');
+    }
+  });
+
+  // simple confetti generator (vanilla)
+  function fireConfetti(){
+    // create 20 dots
+    for(let i=0;i<24;i++){
+      const el = document.createElement('div');
+      el.className = 'dot';
+      el.style.background = randomColor();
+      el.style.left = Math.random()*100 + '%';
+      el.style.top = (Math.random()*30) + '%';
+      el.style.opacity = 1;
+      el.style.transform = `translateY(0) scale(${0.7+Math.random()*0.8}) rotate(${Math.random()*360}deg)`;
+      confettiContainer.appendChild(el);
+      // animate
+      const dur = 1800 + Math.random()*1200;
+      el.animate([
+        { transform: `translateY(0) rotate(${Math.random()*360}deg)`, opacity:1 },
+        { transform: `translateY(600px) rotate(${Math.random()*720}deg)`, opacity:0 }
+      ], {duration: dur, easing:'cubic-bezier(.2,.8,.2,1)'});
+      // remove after
+      setTimeout(()=> el.remove(), dur+50);
+    }
+  }
+
+  function randomColor(){
+    const palette = ['#ffd703','#ff8c42','#8e2de2','#6b21a8','#3fe0c6','#2ecc71','#ff6b6b'];
+    return palette[Math.floor(Math.random()*palette.length)];
+  }
+
+  // accessibility: allow pressing Enter on copy/claim
+  [copyBtn, claimBtn, simulateBtn, resetBtn, shareBtn].forEach(btn=>{
+    btn.addEventListener('keyup', (e)=>{ if(e.key === 'Enter') btn.click(); });
+  });
+</script>
+
+</body>
 </html>
-
