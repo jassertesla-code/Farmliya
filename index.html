@@ -1,169 +1,107 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APP JOJO ♡ JASSER</title>
-
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap');
-
     body {
         margin: 0;
-        font-family: 'Cairo', sans-serif;
-        direction: rtl;
-        text-align: center;
-        background: linear-gradient(135deg, #1f002b, #3d0066, #6a00b3);
-        background-size: 300% 300%;
-        animation: bgMove 12s infinite alternate;
-        color: white;
-        overflow-x: hidden;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #ff99cc, #ff66aa);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        color: #fff;
+        overflow: hidden;
     }
 
-    @keyframes bgMove {
-        0% { background-position: left; }
-        100% { background-position: right; }
-    }
-
-    /* العنوان */
-    .title {
-        font-size: 32px;
+    h1 {
         margin-top: 20px;
-        font-weight: 900;
-        text-shadow: 0 0 10px #ff77ff;
+        font-size: 32px;
+        text-align: center;
+        text-shadow: 0 0 10px #fff;
     }
 
-    /* القلب المتحرك */
     .heart {
         font-size: 50px;
-        color: #ff4d9e;
-        animation: beat 1s infinite;
-        margin-top: 20px;
-    }
-
-    @keyframes beat {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.25); }
-        100% { transform: scale(1); }
-    }
-
-    .date-box {
-        margin-top: 10px;
-        font-size: 20px;
-        font-weight: 700;
-        color: #ffd6ff;
-        text-shadow: 0 0 10px #ff9bff;
-    }
-
-    /* صندوق الهدية */
-    .gift-box {
-        width: 140px;
-        margin: 40px auto;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .gift-box:hover {
-        transform: scale(1.08);
-    }
-
-    .gift-text {
-        margin-top: 10px;
-        font-size: 22px;
-        font-weight: bold;
-        color: #ffe8ff;
-        animation: glow 1.5s infinite alternate;
-    }
-
-    @keyframes glow {
-        0% { text-shadow: 0 0 8px #ff40ff; }
-        100% { text-shadow: 0 0 20px #ff9dff; }
-    }
-
-    /* نافذة الهدية */
-    .reward-popup {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255,255,255,0.1);
-        border: 2px solid #ffb6ff;
-        border-radius: 15px;
-        padding: 25px;
-        width: 80%;
-        max-width: 330px;
-        display: none;
-        backdrop-filter: blur(10px);
-        color: #fff;
-        box-shadow: 0 0 20px #ff6bff;
-    }
-
-    .reward-popup h2 {
-        font-size: 24px;
-        margin-bottom: 5px;
-        color: #ffbfff;
-    }
-
-    .reward-popup button {
-        padding: 10px 20px;
-        background: #ff66cc;
-        border: none;
-        border-radius: 10px;
-        color: #fff;
-        font-size: 18px;
-        cursor: pointer;
         margin-top: 15px;
-        box-shadow: 0 0 10px #ff8cff;
     }
 
+    .date {
+        margin-top: 5px;
+        font-size: 20px;
+    }
+
+    .gift-container {
+        position: relative;
+        margin-top: 50px;
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+    }
+
+    .gift-box {
+        width: 100%;
+        height: 100%;
+        background: url('https://cdn-icons-png.flaticon.com/512/2541/2541988.png') no-repeat center/contain;
+        transition: transform 0.5s;
+        z-index: 2;
+        position: relative;
+    }
+
+    .gift-paper {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) rotate(-20deg);
+        width: 150px;
+        padding: 15px;
+        background: #fff;
+        color: #ff3399;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #ff66aa;
+        opacity: 0;
+        transition: all 1s ease;
+        z-index: 1;
+    }
 </style>
 </head>
 <body>
 
-<!-- العنوان -->
-<div class="title">APP JOJO ♡ JASSER</div>
+<h1>APP JOJO ♡ JASSER</h1>
+<div class="heart">❤️</div>
+<div class="date" id="todayDate"></div>
 
-<!-- القلب -->
-<div class="heart">❤</div>
-
-<!-- التاريخ -->
-<div class="date-box" id="todayDate">...</div>
-
-<!-- صندوق الهدية -->
-<img src="https://cdn-icons-png.flaticon.com/512/2541/2541988.png" class="gift-box" id="gift">
-<div class="gift-text">اضغط لفتح هدية اليوم 🎁</div>
-
-<!-- النافذة المنبثقة -->
-<div class="reward-popup" id="rewardPopup">
-    <h2>🎉 مبرووووك! 🎉</h2>
-    <p>لقد حصلت على <strong>5 نقاط</strong> لهذا اليوم!</p>
-    <p>ادعُ أصدقاءك من الرابط أسفل:</p>
-
-    <p style="word-wrap:break-word; color:#ffd6ff; margin-top:10px;">
-        <strong>
-        https://t.me/xprojectpoint_bot?start=ref_5653032481_bvsvxd
-        </strong>
-    </p>
-
-    <button onclick="closePopup()">إغلاق</button>
+<div class="gift-container" onclick="openGift()">
+    <div class="gift-box" id="giftBox"></div>
+    <div class="gift-paper" id="giftPaper">رسالة حب لجوجو 💌</div>
 </div>
 
 <script>
-    // عرض التاريخ يومياً
+    // عرض التاريخ اليومي
     const today = new Date();
     document.getElementById("todayDate").textContent =
-        today.toLocaleDateString("ar-EG", { year: 'numeric', month: 'long', day: 'numeric' });
+        "تاريخ اليوم: " + today.toLocaleDateString("ar-DZ", { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // الهدية
-    const gift = document.getElementById("gift");
-    const popup = document.getElementById("rewardPopup");
+    // وظيفة فتح الهدية
+    function openGift() {
+        const giftBox = document.getElementById("giftBox");
+        const giftPaper = document.getElementById("giftPaper");
 
-    gift.onclick = function() {
-        popup.style.display = "block";
-    };
+        // تكبير الصندوق
+        giftBox.style.transform = "scale(1.5) rotate(-10deg)";
 
-    function closePopup() {
-        popup.style.display = "none";
+        // بعد قليل تظهر الورقة
+        setTimeout(() => {
+            giftPaper.style.opacity = 1;
+            giftPaper.style.top = "-100px";
+            giftPaper.style.transform = "translateX(-50%) rotate(0deg)";
+        }, 600);
     }
 </script>
 
