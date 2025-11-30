@@ -7,226 +7,123 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1: #0f0520;
-    --bg2: #2b004d;
-    --accent: #ff5fb4;
-    --gold: #ffd166;
-    --paper: #fff8f5;
-    --text-dark: #3b2340;
+    --bg1:#0b0520; --bg2:#3a0066; --accent:#ff62b3; --paper:#fff8f5; --text-dark:#3b2340;
   }
   *{box-sizing:border-box}
   body{
-    margin:0;
-    min-height:100vh;
-    font-family: 'Cairo', sans-serif;
-    background: radial-gradient(1000px 600px at 10% 10%, rgba(255,95,180,0.06), transparent),
+    margin:0; min-height:100vh;
+    font-family:'Cairo',sans-serif;
+    background: radial-gradient(800px 400px at 10% 10%, rgba(255,99,180,0.05), transparent),
                 linear-gradient(180deg,var(--bg1),var(--bg2));
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:28px 16px;
+    color:#fff; display:flex; flex-direction:column; align-items:center; padding:28px;
+    overflow:hidden;
   }
 
-  /* العنوان و القلب (مع التاريخ داخل القلب) */
+  /* ===== العنوان العلوي مع خط مركزي ثم ظهور النص ===== */
+  .header {
+    width:100%; max-width:920px; display:flex; justify-content:center; align-items:center; flex-direction:column;
+    margin-top:6px;
+  }
+  .line {
+    width:2px; height:0; background:linear-gradient(180deg,#ffb1de,#ff5fb4); border-radius:2px;
+    opacity:0.9; transform-origin: top center;
+    animation: drawLine 700ms ease forwards;
+  }
+  @keyframes drawLine { from {height:0;} to {height:60px;} }
+
   .title {
-    text-align:center;
-    margin-bottom:6px;
+    margin-top:14px; font-size:32px; font-weight:900; letter-spacing:1px;
+    opacity:0; transform: translateY(-6px);
+    color: #fff;
+    text-shadow: 0 8px 30px rgba(255,80,150,0.12);
+    animation: fadeInTitle 900ms ease 500ms forwards;
   }
-  .title h1{
-    margin:0;
-    font-size:28px;
-    letter-spacing:1px;
-    text-shadow: 0 6px 22px rgba(0,0,0,0.6);
+  @keyframes fadeInTitle { to {opacity:1; transform:none;} }
+
+  .title .glow {
+    display:inline-block;
+    background: linear-gradient(90deg,#ffd6fb 0%, #ff9ad4 50%, #ffd6fb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 6px 18px rgba(142,45,226,0.15));
   }
-  .sub {
-    margin:8px 0 0 0;
-    display:flex;
-    gap:12px;
-    align-items:center;
-    justify-content:center;
-  }
+
+  /* heart with date inside */
   .heart {
-    width:68px;height:68px;border-radius:999px;
-    background:linear-gradient(180deg,#ff7ab6,#ff3b90);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:0 10px 30px rgba(255,59,144,0.12), inset 0 -6px 12px rgba(0,0,0,0.08);
-    font-weight:900;
-    color:white;
+    margin-top:8px;
+    width:72px;height:72px;border-radius:999px;
+    background:linear-gradient(180deg,#ff84c3,#ff4aa3);
+    display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;
+    box-shadow:0 14px 40px rgba(255,70,150,0.12);
     position:relative;
   }
-  .heart .date{
-    font-size:11px;font-weight:700;line-height:1;text-align:center;
-  }
+  .heart .date { font-size:11px;font-weight:700; text-align:center; line-height:1; }
 
-  /* الحاوية الرئيسية للهدية */
-  .stage{
-    width:100%;
-    max-width:520px;
-    margin-top:28px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    padding:26px;
-  }
-
-  /* تصميم صندوق الهدية (CSS-only) */
-  .gift {
-    width:240px;
-    height:180px;
-    position:relative;
-    perspective:1200px;
-    cursor:pointer;
-  }
-
+  /* ===== منطقة الصندوق والورقة ===== */
+  .stage { width:100%; max-width:640px; margin-top:36px; display:flex; justify-content:center; align-items:center; position:relative; padding:20px; }
+  .gift { width:260px; height:200px; position:relative; perspective:1200px; cursor:pointer; }
   /* قاعدة الصندوق */
   .box-base {
-    width:100%;
-    height:62%;
-    background: linear-gradient(180deg,#4b002f,#2a001b);
-    border-radius:12px;
-    position:absolute;
-    bottom:0;
-    left:0;
-    box-shadow: 0 18px 40px rgba(2,2,2,0.6);
-    overflow:visible;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transform-origin: center top;
-    z-index:2;
+    width:100%; height:64%; background: linear-gradient(180deg,#3b002f,#210016);
+    border-radius:14px; position:absolute; bottom:0; left:0; z-index:6;
+    box-shadow: 0 26px 60px rgba(0,0,0,0.6);
+    display:flex; align-items:center; justify-content:center; overflow:visible;
+    transform-origin: center top; transition: transform 700ms cubic-bezier(.2,.95,.15,1), opacity 600ms ease;
   }
-  /* غلاف الشريط */
-  .ribbon-vertical {
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    width:34px;height:100%;
-    background: linear-gradient(180deg,#ff84c3,#ff4aa3);
-    border-radius:6px;
-    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.12);
-    z-index:3;
-  }
-  .ribbon-horizontal {
-    position:absolute;
-    top:32%;
-    left:0;
-    width:100%;
-    height:30px;
-    background: linear-gradient(90deg,#ff84c3,#ff4aa3);
-    border-radius:6px;
-    z-index:3;
-  }
+  .ribbon-vertical { position:absolute; left:50%; transform:translateX(-50%); width:40px; height:100%; border-radius:6px; background: linear-gradient(180deg,#ff9bd1,#ff4aa3); z-index:7; }
+  .ribbon-horizontal { position:absolute; top:30%; left:0; width:100%; height:34px; border-radius:8px; background: linear-gradient(90deg,#ff9bd1,#ff4aa3); z-index:7; }
   .bow {
-    position:absolute;
-    top: -20px;
-    left:50%;
-    transform:translateX(-50%) rotate(-10deg);
-    width:86px;height:50px;border-radius:18px;
-    background: linear-gradient(180deg,#ffd1e8,#ff86c4);
-    z-index:5;
-    box-shadow: 0 6px 20px rgba(255,91,158,0.18);
+    position:absolute; top:-18px; left:50%; transform:translateX(-50%) rotate(-10deg); width:96px; height:56px; border-radius:20px;
+    background: linear-gradient(180deg,#ffd1e8,#ff86c4); z-index:9; box-shadow: 0 8px 26px rgba(255,91,158,0.12);
   }
-  .bow:before, .bow:after{
-    content:"";
-    position:absolute;
-    width:30px;height:36px;
-    background:inherit;border-radius:8px;
-    top:6px;
-  }
-  .bow:before{left:6px; transform:rotate(-28deg)}
-  .bow:after{right:6px; transform:rotate(28deg)}
+  .bow:before, .bow:after { content:""; position:absolute; width:36px; height:42px; background:inherit; border-radius:10px; top:8px;}
+  .bow:before { left:6px; transform: rotate(-28deg); }
+  .bow:after { right:6px; transform: rotate(28deg); }
 
   /* الغطاء (lid) */
   .box-lid {
-    width:100%;
-    height:48%;
-    position:absolute;
-    top:0;
-    left:0;
-    border-radius:14px;
-    background: linear-gradient(180deg,#6f0045,#3a001f);
-    transform-origin: top center;
-    z-index:6;
-    transition: transform 700ms cubic-bezier(.2,.95,.15,1);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+    width:100%; height:50%; position:absolute; top:0; left:0; border-radius:14px; background: linear-gradient(180deg,#6f0045,#3a001f);
+    transform-origin: top center; z-index:10; transition: transform 700ms cubic-bezier(.2,.95,.15,1), opacity 600ms ease;
+    box-shadow: 0 26px 40px rgba(0,0,0,0.5);
   }
 
   /* الورقة (الملاحظة) */
   .note {
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%) translateY(10px) rotate(-6deg);
-    top:34%;
-    width:160px;
-    padding:14px 12px;
-    background: var(--paper);
-    color: var(--text-dark);
-    border-radius:10px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.3);
-    opacity:0;
-    z-index:1;
-    transform-origin: bottom center;
-    transition: all 900ms cubic-bezier(.2,.9,.2,1);
-    font-weight:700;
-    line-height:1.35;
-    text-align:center;
+    position:absolute; left:50%; transform:translateX(-50%) translateY(8px) rotate(-8deg);
+    top:44%; width:180px; padding:16px; background: var(--paper); color: var(--text-dark);
+    border-radius:10px; box-shadow: 0 26px 60px rgba(0,0,0,0.35); opacity:0; z-index:4;
+    transform-origin: bottom center; transition: all 900ms cubic-bezier(.2,.9,.2,1); text-align:center;
+    font-weight:700; line-height:1.35;
   }
 
-  /* تأثير ظهور الورقة بشكل انسيابي */
-  .opened .box-lid{
-    transform: translateY(-20px) rotateX(55deg) scale(1.02);
-  }
-  .opened .note{
-    opacity:1;
-    top:-40%;
-    transform: translateX(-50%) translateY(0) rotate(0deg);
-  }
+  /* ظهور الورقة واختفاء الصندوق */
+  .opened .box-lid { transform: translateY(-20px) rotateX(65deg) scale(1.02); opacity:0; }
+  .opened .box-base { opacity:0; transform: translateY(12px) scale(0.9); pointer-events:none; }
+  .opened .note { opacity:1; top:-22%; transform:translateX(-50%) translateY(0) rotate(0deg); z-index:30; }
 
   /* الرسالة داخل الورقة */
-  .message{
-    font-size:15px;
-    color:#4b2340;
-  }
-  .message .big{
-    display:block;
-    font-size:17px;
-    margin-top:8px;
-    color:#2b1840;
-    font-weight:900;
-  }
-  /* زر إعادة */
-  .controls{
-    margin-top:26px;
-    display:flex;
-    gap:12px;
-    justify-content:center;
-  }
-  .btn{
-    background:transparent;border:1px solid rgba(255,255,255,0.12);
-    color: #fff;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:700;
-  }
-  .btn:active{transform:translateY(1px)}
+  .message { font-size:15px; color:#4b2340; }
+  .message .from { display:block; margin-top:10px; font-weight:900; color:#2b1840; font-size:15px; }
 
-  /* confetti small */
-  .confetti{
-    position: absolute; inset:0; pointer-events:none; z-index:40;
-  }
+  /* confetti canvas */
+  .confetti { position: fixed; inset:0; pointer-events:none; z-index:1000; }
 
   /* responsive */
-  @media (max-width:420px){
-    .gift{width:190px;height:150px;}
-    .note{width:150px; top:38%}
-    .heart{width:56px;height:56px}
+  @media (max-width:480px){
+    .gift { width:200px; height:150px; }
+    .note { width:150px; top:44% }
+    .title { font-size:24px }
+    .heart { width:60px;height:60px }
   }
 </style>
 </head>
 <body>
 
-  <div class="title">
-    <h1>APP JOJO ♡ JASSER</h1>
-    <div class="sub">
+  <div class="header" aria-hidden="false">
+    <div class="line" id="line"></div>
+    <div class="title" id="titleText"><span class="glow">APP JOJO ♡ JASSER</span></div>
+    <div style="margin-top:8px;">
       <div class="heart" aria-hidden="true">
         <div class="date" id="dateInHeart"></div>
       </div>
@@ -236,7 +133,6 @@
   <div class="stage">
     <div class="gift" id="giftCard" title="اضغط لفتح الهدية">
       <div class="box-lid" aria-hidden="true"></div>
-
       <div class="box-base" aria-hidden="true">
         <div class="ribbon-vertical"></div>
         <div class="ribbon-horizontal"></div>
@@ -244,115 +140,138 @@
       </div>
 
       <div class="note" id="noteCard" role="dialog" aria-hidden="true">
-        <!-- رسالة الحب داخل الورقة -->
-        <div class="message">
-          جوجو الغالية،<br>
-          كل يوم معك يصبح أجمل — ضحكتك تملأ روحي دفئًا وأملاً.<br>
-          أنتِ السبب في سعادتي، وقلبي لكِ وحدك.<span class="big">مع كل الحب، جَاسِر ❤</span>
-        </div>
+        <div class="message" id="messageText"></div>
+        <span class="from">— جَاسِر ❤</span>
       </div>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="btn" id="openBtn">افتح الهدية</button>
-    <button class="btn" id="resetBtn">إعادة</button>
-  </div>
-
-  <!-- confetti container -->
   <canvas class="confetti" id="confettiCanvas"></canvas>
 
 <script>
-  // تاريخ داخل القلب
+/* ========= إعداد الرسائل اليومية ========= */
+const messages = [
+  "جوجو الحبيبة، كل يومٍ معكِ يكبر قلبي فرحًا — ابتسامتكِ نوري.",
+  "حبيبتي جوجو، أنتِ الحلم الذي تحقّق في أيامي. أحبكِ بلا حدود.",
+  "جوجو الغالية، كل لحظة بقربك أجمل من كل ما مرّ — وأنتِ سر سعادتي.",
+  "إلى جوجو، يا أجمل نعمة، شكراً لوجودك؛ أحبكِ بكل نبضة في قلبي.",
+  "جوجو، كلامي قد لا يكفيكِ، لكن قلبي يهديكِ عمراً من الحب والوفاء.",
+  "يا جوجو، ضحكتكِ موسيقى تُنعش روحي — أنتِ لي كل المعاني.",
+  "إلى جوجو، مع كل شروق أراكِ أجمل — لكِ وحدك قلبي وهواي.",
+  "جوجو، وجودكِ يجعل كل يوم ينبض أملًا؛ أحبكِ فوق كل وصف.",
+  "غاليتي جوجو، كنز قلبي أنتِ، كل يوم أحبك أكثر من البارحة.",
+  "جوجو الحبيبة، معكِ تعلمتُ معنى السعادة الحقيقية — دمتِ لي نورًا."
+];
+
+// احسب فهرس الرسالة اعتماداً على التاريخ (ثابت لكل يوم)
+function getDayIndex(date = new Date()){
+  // نستخدم عدد الأيام منذ 1 يناير 1970
+  const msPerDay = 24*60*60*1000;
+  const days = Math.floor(date.getTime() / msPerDay);
+  return days % messages.length;
+}
+
+// تحديث نص الرسالة في الصفحة حسب اليوم
+function updateDailyMessage(){
+  const idx = getDayIndex(new Date());
+  const text = messages[idx];
+  document.getElementById('messageText').innerHTML = text;
+  // خزّن آخر تاريخ معروض (تنبيه لو أردت)
+  localStorage.setItem('last_message_date', new Date().toDateString());
+}
+
+// جدولة التحديث عند منتصف الليل القادم
+function scheduleMidnightUpdate(){
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+  const msUntilMidnight = tomorrow.getTime() - now.getTime();
+  setTimeout(()=>{
+    updateDailyMessage();
+    // بعد أول تحديث اضبط interval كل 24 ساعة
+    setInterval(updateDailyMessage, 24*60*60*1000);
+  }, msUntilMidnight + 100); // +100ms لتأمين
+}
+
+/* ========= ضبط التاريخ داخل القلب ========= */
+const dateEl = document.getElementById('dateInHeart');
+function showDate(){
   const d = new Date();
-  const dateEl = document.getElementById('dateInHeart');
   dateEl.textContent = d.toLocaleDateString('ar-DZ', { year:'numeric', month:'long', day:'numeric' });
+}
+showDate();
 
-  // عناصر
-  const gift = document.getElementById('giftCard');
-  const openBtn = document.getElementById('openBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const note = document.getElementById('noteCard');
+/* ========= تهيئة الرسالة اليومية عند التحميل ========= */
+updateDailyMessage();
+scheduleMidnightUpdate();
 
-  let opened = false;
+/* ========= فتح الهدية: إخفاء الصندوق واظهار الورقة + confetti ========= */
+const gift = document.getElementById('giftCard');
+const confettiCanvas = document.getElementById('confettiCanvas');
 
-  function openGift(){
-    if(opened) return;
-    opened = true;
-    gift.classList.add('opened');
-    note.setAttribute('aria-hidden', 'false');
+let opened = false;
+gift.addEventListener('click', openGift);
 
-    // حركية صغيرة + مؤثر احتفالي
-    launchConfetti();
-  }
+function openGift(){
+  if(opened) return;
+  opened = true;
+  // إضافة صنف opened يؤدي لاختفاء الصندوق وظهور الورقة
+  gift.classList.add('opened');
+  // مؤثر Confetti
+  launchConfetti();
+}
 
-  function resetGift(){
-    opened = false;
-    gift.classList.remove('opened');
-    note.setAttribute('aria-hidden', 'true');
-  }
+/* ===== Confetti بسيط canvas ===== */
+function launchConfetti(){
+  try {
+    const canvas = confettiCanvas;
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
+    const pieces = [];
+    const colors = ['#ff5fb4','#ffd166','#7afcff','#8b5cf6','#ff8a66','#ffd6fb'];
 
-  // ربط النقرات
-  gift.addEventListener('click', openGift);
-  openBtn.addEventListener('click', openGift);
-  resetBtn.addEventListener('click', resetGift);
-
-  /* -------- بسيط Confetti Canvas (خفيف) -------- */
-  function launchConfetti(){
-    try {
-      const canvas = document.getElementById('confettiCanvas');
-      const ctx = canvas.getContext('2d');
-      let W = canvas.width = window.innerWidth;
-      let H = canvas.height = window.innerHeight;
-      const pieces = [];
-      const colors = ['#ff5fb4','#ffd166','#7afcff','#8b5cf6','#ff8a66'];
-
-      for(let i=0;i<80;i++){
-        pieces.push({
-          x: Math.random()*W,
-          y: Math.random()*H - H*0.3,
-          r: 6 + Math.random()*8,
-          d: Math.random()*40 + 10,
-          color: colors[Math.floor(Math.random()*colors.length)],
-          tilt: Math.random()*10 - 10,
-          tiltAngle: Math.random() * Math.PI
-        });
-      }
-
-      let t = 0;
-      function draw(){
-        ctx.clearRect(0,0,W,H);
-        for(let p of pieces){
-          p.tiltAngle += 0.05;
-          p.y += Math.sin(t/10) + 2 + p.r/8;
-          p.x += Math.sin(t/20);
-          p.tilt = Math.sin(p.tiltAngle) * 15;
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.tilt * Math.PI/180);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
-          ctx.restore();
-        }
-        t++;
-        // stop after some time
-        if(t < 200){
-          requestAnimationFrame(draw);
-        } else {
-          ctx.clearRect(0,0,W,H);
-        }
-      }
-      draw();
-
-      // adjust canvas on resize
-      window.addEventListener('resize', ()=>{ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
-    } catch(e){
-      // لا تعمل Confetti في بعض البيئات -> نتجاهل الخطأ
-      console.warn('confetti not supported', e);
+    for(let i=0;i<80;i++){
+      pieces.push({
+        x: Math.random()*W,
+        y: Math.random()*H - H*0.4,
+        r: 6 + Math.random()*10,
+        d: Math.random()*40 + 10,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        tilt: Math.random()*10 - 10,
+        tiltAngle: Math.random()*Math.PI
+      });
     }
-  }
-</script>
 
+    let t = 0;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      for(let p of pieces){
+        p.tiltAngle += 0.05;
+        p.y += Math.sin(t/10) + 2 + p.r/8;
+        p.x += Math.sin(t/20);
+        p.tilt = Math.sin(p.tiltAngle) * 15;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.tilt * Math.PI/180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+        ctx.restore();
+      }
+      t++;
+      if(t < 180) requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,W,H);
+    }
+    draw();
+    window.addEventListener('resize', ()=>{ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+  } catch(e){
+    console.warn('confetti not supported', e);
+  }
+}
+
+/* ===== عند تحميل الصفحة شغّل الحركات الأولية (الخط ثم العنوان) ===== */
+window.addEventListener('load', ()=> {
+  // خط وظهور العنوان مُطبّقان عبر CSS animation عند التحميل
+});
+</script>
 </body>
 </html>
