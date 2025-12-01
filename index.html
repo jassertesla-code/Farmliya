@@ -23,12 +23,11 @@
     overflow-x:hidden;
   }
 
-  /* ===== العنوان: الآن ينزل من فوق (slideDown) ===== */
+  /* header */
   .header {
     width:100%; max-width:920px; display:flex; justify-content:center; align-items:center; flex-direction:column;
     margin-top:6px;
   }
-
   .title {
     margin-top:12px;
     font-size:32px;
@@ -42,9 +41,7 @@
     background: linear-gradient(90deg,#ffd6fb,#ff7ab6 40%, #ffd6fb 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  @keyframes slideDown {
-    to { transform: translateY(0); opacity:1; }
-  }
+  @keyframes slideDown { to { transform: translateY(0); opacity:1; } }
 
   .heart {
     margin-top:8px;
@@ -56,8 +53,29 @@
   }
   .heart .date { font-size:11px;font-weight:700; text-align:center; line-height:1; }
 
-  /* ===== منطقة الصندوق والورقة ===== */
+  /* stage */
   .stage { width:100%; max-width:740px; margin-top:28px; display:flex; justify-content:center; align-items:center; position:relative; padding:20px; }
+
+  /* instruction above gift */
+  .gift-instruction {
+    position: absolute;
+    top: -48px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    padding:10px 16px;
+    border-radius:999px;
+    font-weight:800;
+    color:#ffd6fb;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    letter-spacing:0.4px;
+    animation: popIn 600ms cubic-bezier(.2,.9,.2,1) 600ms both;
+  }
+  @keyframes popIn {
+    from { transform: translateX(-50%) translateY(-6px) scale(0.96); opacity:0; }
+    to { transform: translateX(-50%) translateY(0) scale(1); opacity:1; }
+  }
 
   .gift {
     width:300px;
@@ -124,9 +142,38 @@
   .comment-item .meta { font-size:13px; color:#ffd6fb; font-weight:800; margin-bottom:6px; }
   .comment-item .text { color:#efe7f6; font-size:15px; white-space:pre-wrap; }
 
+  /* overlay waiting */
+  .wait-overlay {
+    position: fixed;
+    inset:0;
+    background: linear-gradient(180deg, rgba(10,6,34,0.85), rgba(25,9,60,0.85));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1200;
+    padding:20px;
+  }
+  .wait-card{
+    width:100%;
+    max-width:520px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;
+    padding:22px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    color:#ffdff5;
+  }
+  .wait-title{font-size:20px;font-weight:900;margin-bottom:10px}
+  .wait-sub{font-size:15px;opacity:0.95;margin-bottom:16px}
+
+  .progress-wrap{width:100%; background:rgba(255,255,255,0.04); height:14px;border-radius:999px; overflow:hidden}
+  .progress-fill{height:100%; width:0%; background:linear-gradient(90deg,#ff9bd1,#ff4aa3); transition:width 0.2s linear}
+
   /* responsive */
   @media (max-width:480px){
     .gift{width:220px;height:170px;} .note{width:180px; top:44%} .title{font-size:24px} .heart{width:60px;height:60px}
+    .wait-card{padding:16px}
   }
 </style>
 </head>
@@ -140,6 +187,8 @@
   </div>
 
   <div class="stage">
+    <div class="gift-instruction">اضغطي يا جوجو على الصندوق</div>
+
     <div class="gift" id="giftCard" title="اضغط لفتح الهدية">
       <div class="box-lid" aria-hidden="true"></div>
       <div class="box-base" aria-hidden="true">
@@ -165,15 +214,27 @@
       <textarea id="commentText" rows="4" placeholder="اكتب تعليقك هنا — أي شخص يستطيع التعليق بدون تسجيل"></textarea>
       <div>
         <button id="postCommentBtn">أضف تعليق</button>
-        <span class="note-small">التعليقات تُخزّن محليًا في متصفحك (بدون تسجيل دخول). إذا تريد ظهور التعليقات للجميع على الإنترنت نحتاج إضافة خدمة (سيرفر).</span>
+        <span class="note-small">التعليقات تُخزّن محليًا في متصفحك (بدون تسجيل). إذا تريد ظهور التعليقات للجميع على الإنترنت نحتاج إضافة خدمة (سيرفر).</span>
       </div>
     </div>
 
     <div class="comment-list" id="commentList" aria-live="polite"></div>
   </section>
 
+  <!-- WAIT overlay -->
+  <div class="wait-overlay" id="waitOverlay" aria-hidden="false">
+    <div class="wait-card" role="status" aria-live="polite">
+      <div class="wait-title">انتظري 5 ثواني لكي تظهر رسالتك يا جوجو</div>
+      <div class="wait-sub">الجميع يحب المفاجآت — انتظري لحظة!</div>
+      <div style="margin-top:12px" class="progress-wrap" aria-hidden="false">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div style="margin-top:10px; font-size:13px; color:#ffdfef" id="countdownText">5 ثواني</div>
+    </div>
+  </div>
+
 <script>
-  /* ======== رسائل يومية (مثل السابق) ======== */
+  /* ======== رسائل يومية ======== */
   const messages = [
     "جوجو الحبيبة، كل يومٍ معكِ يكبر قلبي فرحًا — ضحكتكِ نوري.",
     "حبيبتي جوجو، أنتِ الحلم الذي تحقّق في أيامي. أحبكِ بلا حدود.",
@@ -198,20 +259,22 @@
     localStorage.setItem('last_message_date', new Date().toDateString());
   }
 
-  /* ======== عرض التاريخ في القلب ======== */
+  /* ======== date in heart ======== */
   function showDate(){
     const d = new Date();
     document.getElementById('dateInHeart').textContent =
       d.toLocaleDateString('ar-DZ', { year:'numeric', month:'long', day:'numeric' });
   }
   showDate();
+
+  /* ======== initialize message and schedule midnight update ======== */
   updateDailyMessage();
 
-  /* ======== فتح الهدية وConfetti ======== */
+  /* ======== gift open & confetti (same behavior) ======== */
   const gift = document.getElementById('giftCard');
   const confettiCanvas = document.getElementById('confettiCanvas');
   let opened = false;
-  gift.addEventListener('click', openGift);
+  gift.addEventListener('click', ()=> { if(!opened) openGift(); });
 
   function openGift(){
     if(opened) return;
@@ -219,9 +282,11 @@
     gift.classList.add('opened');
     updateDailyMessage();
     launchConfetti();
+    // hide overlay if still visible
+    hideOverlayImmediate();
   }
 
-  /* ======== Confetti (خفيف) ======== */
+  /* ======== confetti ======== */
   function launchConfetti(){
     try {
       const canvas = confettiCanvas;
@@ -268,14 +333,59 @@
     }
   }
 
-  /* ======== تعليقات بدون تسجيل (محلياً) ======== */
+  /* ======== wait overlay countdown logic ======== */
+  const overlay = document.getElementById('waitOverlay');
+  const progressFill = document.getElementById('progressFill');
+  const countdownText = document.getElementById('countdownText');
+
+  function hideOverlayImmediate(){
+    if(!overlay) return;
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden','true');
+  }
+
+  function startCountdown(seconds = 5){
+    if(!overlay) return;
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden','false');
+    progressFill.style.width = '0%';
+    let elapsed = 0;
+    const tick = 100; // ms
+    const totalTicks = (seconds*1000) / tick;
+    let currentTick = 0;
+    countdownText.textContent = `${seconds} ثواني`;
+    const interval = setInterval(()=>{
+      currentTick++;
+      const percent = Math.min(100, Math.round((currentTick / totalTicks) * 100));
+      progressFill.style.width = percent + '%';
+      const remaining = Math.max(0, Math.ceil((seconds*1000 - currentTick*tick)/1000));
+      countdownText.textContent = remaining + ' ثواني';
+      if(currentTick >= totalTicks){
+        clearInterval(interval);
+        countdownText.textContent = 'انتهى الانتظار';
+        // بعد الانتهاء: إخفاء النافذة ثم اظهار الرسالة (بفتح الهدية تلقائياً)
+        setTimeout(()=>{
+          hideOverlayImmediate();
+          // افتح الهدية تلقائياً بدون انتظار نقرة
+          openGift();
+        }, 250);
+      }
+    }, tick);
+  }
+
+  // ابدأ العد مباشرة عند تحميل الصفحة
+  window.addEventListener('load', ()=> {
+    // عرض النافذة والعد 5 ثواني عند كل تحميل
+    startCountdown(5);
+  });
+
+  /* ======== comments logic (same as before) ======== */
   const commentListEl = document.getElementById('commentList');
   const postBtn = document.getElementById('postCommentBtn');
   const nameInput = document.getElementById('commentName');
   const textInput = document.getElementById('commentText');
   const STORAGE_KEY = 'xp_local_comments_v1';
 
-  // escape text to prevent injection
   function escapeHtml(str){
     return str.replace(/[&<>"'`=\/]/g, function(s){ return ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','=':'&#x3D;','`':'&#x60;'
@@ -329,13 +439,10 @@
     nameInput.value = '';
     textInput.value = '';
     renderComments();
-    // scroll to top of comment list to see new comment
     commentListEl.scrollTop = 0;
   });
 
-  // initial render
   renderComments();
-
 </script>
 </body>
 </html>
