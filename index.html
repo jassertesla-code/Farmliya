@@ -59,6 +59,27 @@
   /* ===== منطقة الصندوق والورقة ===== */
   .stage { width:100%; max-width:740px; margin-top:28px; display:flex; justify-content:center; align-items:center; position:relative; padding:20px; }
 
+  /* instruction above gift */
+  .gift-instruction {
+    position: absolute;
+    top: -48px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    padding:10px 16px;
+    border-radius:999px;
+    font-weight:800;
+    color:#ffd6fb;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    letter-spacing:0.4px;
+    animation: popIn 600ms cubic-bezier(.2,.9,.2,1) 600ms both;
+  }
+  @keyframes popIn {
+    from { transform: translateX(-50%) translateY(-6px) scale(0.96); opacity:0; }
+    to { transform: translateX(-50%) translateY(0) scale(1); opacity:1; }
+  }
+
   .gift {
     width:300px;
     height:210px;
@@ -140,6 +161,9 @@
   </div>
 
   <div class="stage">
+    <!-- instruction text added here -->
+    <div class="gift-instruction">اضغطي يا جوجو على الصندوق</div>
+
     <div class="gift" id="giftCard" title="اضغط لفتح الهدية">
       <div class="box-lid" aria-hidden="true"></div>
       <div class="box-base" aria-hidden="true">
@@ -165,7 +189,7 @@
       <textarea id="commentText" rows="4" placeholder="اكتب تعليقك هنا — أي شخص يستطيع التعليق بدون تسجيل"></textarea>
       <div>
         <button id="postCommentBtn">أضف تعليق</button>
-        <span class="note-small">التعليقات تُخزّن محليًا في متصفحك (بدون تسجيل دخول). إذا تريد ظهور التعليقات للجميع على الإنترنت نحتاج إضافة خدمة (سيرفر).</span>
+        <span class="note-small">التعليقات تُخزّن محليًا في متصفحك (بدون تسجيل). إذا تريد ظهور التعليقات للجميع على الإنترنت نحتاج إضافة خدمة (سيرفر).</span>
       </div>
     </div>
 
@@ -275,7 +299,6 @@
   const textInput = document.getElementById('commentText');
   const STORAGE_KEY = 'xp_local_comments_v1';
 
-  // escape text to prevent injection
   function escapeHtml(str){
     return str.replace(/[&<>"'`=\/]/g, function(s){ return ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','=':'&#x3D;','`':'&#x60;'
@@ -329,13 +352,10 @@
     nameInput.value = '';
     textInput.value = '';
     renderComments();
-    // scroll to top of comment list to see new comment
     commentListEl.scrollTop = 0;
   });
 
-  // initial render
   renderComments();
-
 </script>
 </body>
 </html>
